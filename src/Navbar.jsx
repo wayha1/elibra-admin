@@ -4,7 +4,7 @@ export const Navbar = () => {
     <>
       <nav class="container navbar navbar-expand-lg bg-success " >
         <div class="container-fluid ">
-          <a class="navbar-brand text-light" href="#">
+          <a class="navbar-brand text-light" href="/">
             Dashboard
           </a>
           <button
@@ -21,7 +21,7 @@ export const Navbar = () => {
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active text-light" aria-current="page" href="/">
+                <a class="nav-link active text-light" aria-current="page" href="/home">
                   Home
                 </a>
               </li>
@@ -30,7 +30,7 @@ export const Navbar = () => {
                   Aboutus
                 </a>
               </li>
-              <li class="nav-item dropdown">
+              {/* <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle text-light"
                   href="#"
@@ -65,7 +65,7 @@ export const Navbar = () => {
                 <a class="nav-link disabled" aria-disabled="true">
                   Disabled
                 </a>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
