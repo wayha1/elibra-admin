@@ -4,14 +4,15 @@ import { Author } from "../Author/Author";
 
 export const Dashboard = () => {
   const [categories, setCategories] = useState([
-    { id: 1, name: "Management" },
-    { id: 2, name: "Author" },
-    { id: 3, name: "Comic Book" },
-    { id: 4, name: "Comdy-Book" },
-    { id: 5, name: "Study-Book" },
-    { id: 6, name: "Ministry-Book" },
-    { id: 7, name: "Novel-Book" },
-    { id: 8, name: "Mathematic" },
+    { id: 1, name: "Dashboard" },
+    { id: 2, name: "Management" },
+    { id: 3, name: "Author" },
+    { id: 4, name: "Comic Book" },
+    { id: 5, name: "Comdy-Book" },
+    { id: 6, name: "Study-Book" },
+    { id: 7, name: "Ministry-Book" },
+    { id: 8, name: "Novel-Book" },
+    { id: 9, name: "Mathematic" },
   ]);
 
   const [activeComponent, setActiveComponent] = useState("All Categories");
@@ -41,7 +42,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="w-screen h-[1200px] flex ">
+    <div className="w-screen h-[1200px] flex">
       <div className="flex flex-col w-[300px] h-[1200px] bg-neutral-300 bg-shadow-lg">
         <p className="mt-10 text-center text-cyan-600 text-3xl p-2 font-sans uppercase font-bold">
           Dashboard
