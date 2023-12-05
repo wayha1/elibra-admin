@@ -75,7 +75,7 @@ export const AddAuthor = () => {
           className="font-[100px] absolute l-0 t-0 opacity-0"
         />
         <span className="flex text-3xl">
-          <FcAddImage className="mt-1 mr-2" /> Upload Image
+          <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
         </span>
       </label>
       <button onClick={handleCreate} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
