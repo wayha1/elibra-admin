@@ -11,15 +11,15 @@ export const Navbar = () => {
     <>
       <nav className="navbar navbar-expand-lg bg-blue-700 ">
         <div className="flex space-x-10 justify-between w-screen">
-          <a className="ml-5 navbar-brand text-light" href="/">
+          <a className="ml-5 navbar-brand text-light" href="/dashboard">
             Dashboard
           </a>
           <div className="flex mx-4">
+            <a className="navbar-brand text-light" href="/">
+              Home
+            </a>
             <a className="navbar-brand text-light" href="/aboutus">
               About us
-            </a>
-            <a className="navbar-brand text-light" href="/home">
-              Home
             </a>
             {/* Dropdown for Account */}
             <div className="dropdown flex" onClick={toggleAccountDropdown}>
