@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Management } from "../../Management";
 import { Author } from "../Author/Author";
+import { AddAuthor } from "../Author/AddAuthor";
 
 export const Dashboard = () => {
   const [categories, setCategories] = useState([
-    { id: 1, name: "Dashboard" },
+    // { id: 1, name: "Dashboard" },
     { id: 2, name: "Management" },
     { id: 3, name: "Author" },
     { id: 4, name: "Comic Book" },
@@ -15,7 +16,7 @@ export const Dashboard = () => {
     { id: 9, name: "Mathematic" },
   ]);
 
-  const [activeComponent, setActiveComponent] = useState("All Categories");
+  const [activeComponent, setActiveComponent] = useState("Management");
 
   const handleComponentChange = (component) => {
     setActiveComponent(component);
@@ -42,8 +43,8 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="w-screen h-[1200px] flex">
-      <div className="flex flex-col w-[300px] h-[1200px] bg-neutral-300 bg-shadow-lg">
+    <div className="w-full h-full flex">
+      <div className="flex flex-col w-[300px] h-screen bg-neutral-300 bg-shadow-lg">
         <p className="mt-10 text-center text-cyan-600 text-3xl p-2 font-sans uppercase font-bold">
           Dashboard
         </p>
@@ -64,7 +65,7 @@ export const Dashboard = () => {
         </ul>
       </div>
       {/* Content Section */}
-      <div className="flex-grow bg-neutral-200">{renderContent()}</div>
+      <div className="flex-grow bg-neutral-200 ">{renderContent()}</div>
     </div>
   );
 };

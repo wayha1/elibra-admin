@@ -6,16 +6,19 @@ import { Navbar } from "./Navbar";
 import { Aboutus } from "./component/Aboutus/Aboutus";
 import { Dashboard } from "./component/Dashboard/Dashboard";
 import { Account } from "./component/account/Account";
+import { AddAuthor } from "./component/Author/AddAuthor";
 function App() {
   return (
     <>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Dashboard />}></Route>
-          <Route path="/home" element={<Homepage />}></Route>
+          {/* <Route path="/login" element={<Dashboard />}></Route> */}
+          <Route path="/" element={<Homepage />}></Route>
+          <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/aboutus" element={<Aboutus />}></Route>
           <Route path="/account" element={<Account />}></Route>
+          <Route path="/inputauthor" element={<AddAuthor />}></Route>
         </Routes>
       </BrowserRouter>
     </>
