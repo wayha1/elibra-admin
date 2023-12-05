@@ -11,11 +11,14 @@ export const AddAuthor = () => {
   const [authGender, setAuthGender] = useState("");
   const [authDOB, setAuthDOB] = useState("");
   const [authImage, setAuthImage] = useState(null);
+  const [loading, setLoading] = useState(false); // New state for loading
 
   const value = collection(db, "Author");
 
   const handleCreate = async () => {
-    if (!authImage) return;
+    if (!authImage || loading) return;
+
+    setLoading(true); // Set loading state to true
 
     const imgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
 
@@ -34,9 +37,10 @@ export const AddAuthor = () => {
       alert("Author data & Image Upload");
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
+    } finally {
+      setLoading(false); // Reset loading state after upload is complete (success or failure)
     }
   };
-
   return (
     <div className="container flex flex-col m-2 space-y-5">
       <input
@@ -71,11 +75,11 @@ export const AddAuthor = () => {
           className="font-[100px] absolute l-0 t-0 opacity-0"
         />
         <span className="flex text-3xl">
-        <FcAddImage className="mt-1 mr-2"/> Upload Image
+          <FcAddImage className="mt-1 mr-2" /> Upload Image
         </span>
       </label>
       <button onClick={handleCreate} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
-        Upload
+        {loading ? "Uploading..." : "Upload"}
       </button>
     </div>
   );
