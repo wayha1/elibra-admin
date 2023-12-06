@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Management } from "../../Management";
 import { Author } from "../Author/Author";
+import { NovelBook } from "../NovelBook/NovelBook";
 import { AddAuthor } from "../Author/AddAuthor";
 
 export const Dashboard = () => {
@@ -8,11 +9,11 @@ export const Dashboard = () => {
     // { id: 1, name: "Dashboard" },
     { id: 2, name: "Management" },
     { id: 3, name: "Author" },
-    { id: 4, name: "Comic Book" },
+    { id: 4, name: "Novel-Book" },
     { id: 5, name: "Comdy-Book" },
     { id: 6, name: "Study-Book" },
     { id: 7, name: "Ministry-Book" },
-    { id: 8, name: "Novel-Book" },
+    { id: 8, name: "Comic Book" },
     { id: 9, name: "Mathematic" },
   ]);
 
@@ -27,8 +28,8 @@ export const Dashboard = () => {
         return <Management />;
       case "Author":
         return <Author />;
-      // case "Comic":
-      //   return <ComicBook />;
+      case "Novel-Book":
+        return <NovelBook />;
       // case "Study":
       //   return <StudyBook />;
       // case "Novel":

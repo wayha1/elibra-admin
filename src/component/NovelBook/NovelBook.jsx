@@ -1,33 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { AddAuthor } from "./AddAuthor";
-import { AuthorList } from "./AuthorList";
-import { SeachAuthor } from "./SeachAuthor";
-// import { db } from "../../firebase";
-// import { Link, useLocation } from "react-router-dom";
+import { NovelBookList } from "./NovelBookList";
+import { NovelCrud } from "./NovelCrud";
+import { SearchNovelBook } from "./SearchNovelBook";
 
-export const Author = () => {
-  // const [selectedPage, setSelectedPage] = useState("add");
-  const [CRUD, setCRUD] = useState([
-    { id: 1, name: "View List" },
-    { id: 2, name: "Add Author" },
-    { id: 3, name: "Search Author" },
+export const NovelBook = () => {
+  const [BookHead, setBookHead] = useState([
+    { id: 1, name: "View-Book" },
+    { id: 2, name: "Add Book" },
+    { id: 3, name: "Search Book" },
   ]);
-  // const handlePageChange = (page) => {
-  //   setSelectedPage(page);
-  // };
   const [activeComponent, setActiveComponent] = useState("View List");
-
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };
   const renderContent = () => {
     switch (activeComponent) {
-      case "View List":
-        return <AuthorList />;
-      case "Add Author":
-        return <AddAuthor />;
-      case "Search Author":
-        return <SeachAuthor />;
+      case "View-Book":
+        return <NovelBookList />;
+      case "Add Book":
+        return <NovelCrud />;
+      case "Search Book":
+        return <SearchNovelBook />;
       default:
         return (
           <div className="text-center text-2xl font-medium ">
@@ -36,23 +29,22 @@ export const Author = () => {
         );
     }
   };
-
   return (
     <div className="flex flex-col w-auto">
       {/* Header */}
       <div className="bg-shadow-lg p-4 bg-neutral-500 ">
         <ul className="flex items-center justify-center">
-          {CRUD.map((crud) => (
-            <li key={crud.id} className="mr-4">
+          {BookHead.map((head) => (
+            <li key={head.id} className="mr-4">
               <span
                 className={`${
-                  activeComponent === crud.name
+                  activeComponent === head.name
                     ? "bg-red-500 hover:bg-shadow-xl hover:bg-red-600 rounded-xl text-gray-200"
                     : "text-neutral-100"
                 } cursor-pointer font-medium text-center text-2xl p-2 bg-blue-700 hover:bg-shadow-xl hover:bg-blue-600 rounded-xl text-gray-200`}
-                onClick={() => handleComponentChange(crud.name)}
+                onClick={() => handleComponentChange(head.name)}
               >
-                {crud.name}
+                {head.name}
               </span>
             </li>
           ))}

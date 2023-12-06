@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db, imgDB } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -17,15 +17,11 @@ export const AddAuthor = () => {
 
   const handleCreate = async () => {
     if (!authImage || loading) return;
-
-    setLoading(true); // Set loading state to true
-
+    setLoading(true);
     const imgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
-
     try {
       await uploadBytes(imgRef, authImage);
       const imageUrl = await getDownloadURL(imgRef);
-
       await addDoc(value, {
         authName,
         Decs: authDecs,
@@ -38,8 +34,9 @@ export const AddAuthor = () => {
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
     } finally {
-      setLoading(false); // Reset loading state after upload is complete (success or failure)
+      setLoading(false);
     }
+    useEffect()
   };
   return (
     <div className="container flex flex-col m-2 space-y-5">
@@ -74,7 +71,7 @@ export const AddAuthor = () => {
           accept="image/*"
           className="font-[100px] absolute l-0 t-0 opacity-0"
         />
-        <span className="flex text-3xl">
+        <span className="flex text-3xl ">
           <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
         </span>
       </label>

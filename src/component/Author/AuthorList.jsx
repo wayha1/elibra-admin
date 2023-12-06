@@ -1,16 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
+import { db, imgDB } from "../../firebase";
+import { ref, deleteObject } from "firebase/storage";
+import Modal from "./Modal";
 
 export const AuthorList = () => {
   const [authorList, setAuthorList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false); // Add state for delete success
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
+
+  const handleDelete = async (authorId, imageUrl) => {
+    if (loading) return;
+
+    setSelectedAuthor({ authorId, imageUrl });
+    setShowModal(true);
+  };
+
+  const confirmDelete = async () => {
+    setLoading(true);
+    setDeleteSuccess(false);
+    try {
+      const authorRef = doc(db, "Author", selectedAuthor.authorId);
+      const imgRef = ref(imgDB, selectedAuthor.imageUrl);
+
+      await deleteDoc(authorRef);
+      await deleteObject(imgRef);
+
+      // Set deleteSuccess to true after successful deletion
+      setDeleteSuccess(true);
+    } catch (error) {
+      console.error("Error deleting document or image:", error.message);
+    } finally {
+      setLoading(false);
+      setShowModal(false); // Close the modal upon completing the deletion
+    }
+  };
 
   useEffect(() => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
       const authVal = await getDocs(value);
       setAuthorList(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      console.log(authVal);
     };
     getAuthors();
   }, []);
@@ -29,11 +61,35 @@ export const AuthorList = () => {
             <p>{author.DOB}</p>
           </div>
           <div className="ml-auto flex">
-            <button className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded">Delete</button>
-            <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded">Update</button>
+            <button
+              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
+              onClick={() => handleDelete(author.id, author.imgAuth)}
+            >
+              Delete
+            </button>
+            {/* Add the update functionality as needed */}
+            <button
+              className="bg-green-500 text-white p-2 active:bg-blue-500 rounded"
+              onClick={() => {
+                // Implement your update logic here
+              }}
+            >
+              Update
+            </button>
           </div>
         </div>
       ))}
+
+      <Modal
+        isOpen={showModal}
+        closeModal={() => {
+          setShowModal(false);
+          setDeleteSuccess(false);
+        }}
+        onConfirm={confirmDelete}
+        loading={loading}
+        deleteSuccess={deleteSuccess}
+      />
     </div>
   );
 };
