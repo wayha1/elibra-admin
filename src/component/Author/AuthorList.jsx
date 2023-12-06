@@ -4,37 +4,36 @@ import { db, imgDB } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
 import Modal from "./Modal";
 
+// ... (imports)
+
 export const AuthorList = () => {
   const [authorList, setAuthorList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [deleteSuccess, setDeleteSuccess] = useState(false); // Add state for delete success
   const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(false); // New state for delete success
 
   const handleDelete = async (authorId, imageUrl) => {
     if (loading) return;
-
     setSelectedAuthor({ authorId, imageUrl });
+    setDeleteSuccess(false);
     setShowModal(true);
   };
 
   const confirmDelete = async () => {
     setLoading(true);
-    setDeleteSuccess(false);
     try {
       const authorRef = doc(db, "Author", selectedAuthor.authorId);
       const imgRef = ref(imgDB, selectedAuthor.imageUrl);
 
       await deleteDoc(authorRef);
       await deleteObject(imgRef);
-
-      // Set deleteSuccess to true after successful deletion
       setDeleteSuccess(true);
     } catch (error) {
       console.error("Error deleting document or image:", error.message);
     } finally {
       setLoading(false);
-      setShowModal(false); // Close the modal upon completing the deletion
+      setShowModal(false);
     }
   };
 
@@ -67,13 +66,7 @@ export const AuthorList = () => {
             >
               Delete
             </button>
-            {/* Add the update functionality as needed */}
-            <button
-              className="bg-green-500 text-white p-2 active:bg-blue-500 rounded"
-              onClick={() => {
-                // Implement your update logic here
-              }}
-            >
+            <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded" onClick={() => {}}>
               Update
             </button>
           </div>
@@ -82,10 +75,7 @@ export const AuthorList = () => {
 
       <Modal
         isOpen={showModal}
-        closeModal={() => {
-          setShowModal(false);
-          setDeleteSuccess(false);
-        }}
+        closeModal={() => setShowModal(false)}
         onConfirm={confirmDelete}
         loading={loading}
         deleteSuccess={deleteSuccess}

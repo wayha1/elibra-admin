@@ -9,7 +9,7 @@ export const NovelBook = () => {
     { id: 2, name: "Add Book" },
     { id: 3, name: "Search Book" },
   ]);
-  const [activeComponent, setActiveComponent] = useState("View List");
+  const [activeComponent, setActiveComponent] = useState("View-Book");
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };

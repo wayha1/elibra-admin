@@ -44,13 +44,13 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="w-full h-full flex">
-      <div className="flex flex-col w-[300px] h-screen bg-neutral-300 bg-shadow-lg">
+    <div className="w-full h-screen flex">
+      <div className="flex flex-col w-[25%] h-screen bg-neutral-300 bg-shadow-lg">
         <p className="mt-10 text-center text-cyan-600 text-3xl p-2 font-sans uppercase font-bold">
           Dashboard
         </p>
 
-        <ul className="mt-20">
+        <ul className="mt-20 ">
           {categories.map((category) => (
             <li key={category.id} className="flex m-1 items-center justify-center">
               <span
@@ -66,7 +66,7 @@ export const Dashboard = () => {
         </ul>
       </div>
       {/* Content Section */}
-      <div className="flex-grow bg-neutral-200 ">{renderContent()}</div>
+      <div className="flex-grow bg-neutral-200 w-[75%]">{renderContent()}</div>
     </div>
   );
 };
