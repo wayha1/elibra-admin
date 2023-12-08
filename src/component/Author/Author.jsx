@@ -6,15 +6,11 @@ import { SeachAuthor } from "./SeachAuthor";
 // import { Link, useLocation } from "react-router-dom";
 
 export const Author = () => {
-  // const [selectedPage, setSelectedPage] = useState("add");
   const [CRUD, setCRUD] = useState([
     { id: 1, name: "View List" },
     { id: 2, name: "Add Author" },
     { id: 3, name: "Search Author" },
   ]);
-  // const handlePageChange = (page) => {
-  //   setSelectedPage(page);
-  // };
   const [activeComponent, setActiveComponent] = useState("View List");
 
   const handleComponentChange = (component) => {

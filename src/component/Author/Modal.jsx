@@ -1,7 +1,15 @@
 import React from "react";
 import { FaSpinner } from "react-icons/fa";
 
-const Modal = ({ isOpen, closeModal, onConfirm, loading, deleteSuccess }) => {
+const Modal = ({ isOpen, closeModal, onConfirm, loading }) => {
+  const handleConfirm = async () => {
+    // Execute the onConfirm action
+    await onConfirm();
+
+    // Close the modal after the action is completed
+    closeModal();
+  };
+
   return (
     <div className={`fixed inset-0 z-50 ${isOpen ? "block" : "hidden"}`} onClick={closeModal}>
       <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -15,13 +23,7 @@ const Modal = ({ isOpen, closeModal, onConfirm, loading, deleteSuccess }) => {
             </div>
           ) : (
             <div className="flex justify-end">
-              <button
-                className="mr-2 bg-red-500 text-white p-2 rounded"
-                onClick={() => {
-                  onConfirm();
-                  // Do not close the modal immediately; let the onConfirm handler handle it
-                }}
-              >
+              <button className="mr-2 bg-red-500 text-white p-2 rounded" onClick={handleConfirm}>
                 Confirm
               </button>
               <button className="bg-gray-500 text-white p-2 rounded" onClick={closeModal}>
