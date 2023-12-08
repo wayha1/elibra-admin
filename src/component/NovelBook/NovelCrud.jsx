@@ -50,11 +50,26 @@ export const NovelCrud = () => {
       setBookDate("");
       setBookCover(null);
       setBookPdf(null);
+
+      // Fetch updated books
+      const booksCollection = await getDocs(value);
+      setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
     } finally {
       setLoading(false);
     }
+  };
+  const handleDeleteBook = async (bookId) => {
+    try {
+      await deleteDoc(doc(value, bookId));
+      alert("Book deleted successfully");
+    } catch (error) {
+      console.error("Error deleting book:", error.message);
+    } finally {
+      setLoading(false);
+    }
+    useEffect();
   };
 
   return (
