@@ -40,20 +40,27 @@ export const NovelBookList = () => {
   }, []);
   return (
     <section>
-      <div className="header">
-        <h1 className="text-4xl px-10 uppercase font-bold flex lg:py-3 hover:text-cyan-800 rounded-xl">
-          Novel
-        </h1>
-      </div>
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="container w-auto">
         {NovelBook.map((item, index) => (
-          <div key={index}>
-            <img src={item.img} alt={`Novel-${index}`} className="mt-5 pl-2 w-40 h-auto ml-3" />
-            <div className="">
-              <h3 className="text-xl font-bold mb-2 ml-10">{item.title}</h3>
-              <p className="text-sm mb-2 ml-10">{item.price}</p>
+          <div key={index} className="flex items-center mb-4 p-4 bg-white rounded-lg ">
+            <img src={item.img} alt={`Novel-${index}`} className="w-40 h-50" />
+            <div className="flex ml-4 w-full">
+              <div className="text-lg font-bold">
+                <h3 className="">{item.title}</h3>
+                <p className="">{item.price}</p>
+              </div>
+              <div className="ml-auto flex">
+            <button
+              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
+              onClick={() => handleDelete(author.id, author.imgAuth)}
+            >
+              Delete
+            </button>
+            <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded" onClick={() => {}}>
+              Update
+            </button>
+          </div>
             </div>
-            {/* Add your other Bacll-related content here */}
           </div>
         ))}
       </div>

@@ -4,8 +4,6 @@ import { db, imgDB } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
 import Modal from "./Modal";
 
-// ... (imports)
-
 export const AuthorList = () => {
   const [authorList, setAuthorList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,10 +47,8 @@ export const AuthorList = () => {
   return (
     <div className="container w-auto">
       {authorList.map((author) => (
-        <div key={author.id} className="flex items-center mb-4 p-4 bg-white rounded-lg">
-          <div className="">
-            <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
-          </div>
+        <div key={author.id} className="flex w-full items-center mb-4 p-4 bg-white rounded-lg">
+          <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
           <div className="ml-4">
             <p className="text-lg font-bold">{author.authName}</p>
             <p>{author.Gender}</p>

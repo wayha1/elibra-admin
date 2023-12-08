@@ -1,7 +1,7 @@
 import React from "react";
-import { FaSpinner } from "react-icons/fa"; // Import the spinner icon from react-icons/fa
+import { FaSpinner } from "react-icons/fa";
 
-const Modal = ({ isOpen, closeModal, onConfirm, loading }) => {
+const Modal = ({ isOpen, closeModal, onConfirm, loading, deleteSuccess }) => {
   return (
     <div className={`fixed inset-0 z-50 ${isOpen ? "block" : "hidden"}`} onClick={closeModal}>
       <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -19,7 +19,7 @@ const Modal = ({ isOpen, closeModal, onConfirm, loading }) => {
                 className="mr-2 bg-red-500 text-white p-2 rounded"
                 onClick={() => {
                   onConfirm();
-                  closeModal();
+                  // Do not close the modal immediately; let the onConfirm handler handle it
                 }}
               >
                 Confirm
