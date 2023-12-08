@@ -3,10 +3,7 @@ import { FaSpinner } from "react-icons/fa";
 
 const Modal = ({ isOpen, closeModal, onConfirm, loading }) => {
   const handleConfirm = async () => {
-    // Execute the onConfirm action
     await onConfirm();
-
-    // Close the modal after the action is completed
     closeModal();
   };
 

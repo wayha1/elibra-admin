@@ -11,7 +11,8 @@ export const AddAuthor = () => {
   const [authGender, setAuthGender] = useState("");
   const [authDOB, setAuthDOB] = useState("");
   const [authImage, setAuthImage] = useState(null);
-  const [loading, setLoading] = useState(false); // New state for loading
+  const [imageUrl, setImageUrl] = useState(""); // New state for image URL
+  const [loading, setLoading] = useState(false);
 
   const value = collection(db, "Author");
 
@@ -21,13 +22,14 @@ export const AddAuthor = () => {
     const imgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
     try {
       await uploadBytes(imgRef, authImage);
-      const imageUrl = await getDownloadURL(imgRef);
+      const url = await getDownloadURL(imgRef);
+      setImageUrl(url); // Set the image URL
       await addDoc(value, {
         authName,
         Decs: authDecs,
         Gender: authGender,
         DOB: authDOB,
-        imgAuth: imageUrl,
+        imgAuth: url,
       });
 
       alert("Author data & Image Upload");
@@ -36,7 +38,6 @@ export const AddAuthor = () => {
     } finally {
       setLoading(false);
     }
-    useEffect()
   };
   return (
     <div className="container flex flex-col m-2 space-y-5">
