@@ -62,8 +62,6 @@ export const AuthorList = () => {
 
         // Delete the old image
         await deleteObject(imgRef);
-
-        // Update the document with the new data including the new image URL
         await updateDoc(authorRef, {
           authName: updatedAuthor.authName,
           Gender: updatedAuthor.Gender,
@@ -111,17 +109,23 @@ export const AuthorList = () => {
           </div>
           <div className="ml-auto flex">
             <button
-              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
+              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded-lg"
               onClick={() => handleDelete(author.id, author.imgAuth)}
             >
               Delete
             </button>
 
             <button
-              className="bg-green-500 text-white p-2 active:bg-blue-500 rounded"
+              className="mr-2 bg-green-500 text-white p-2 active:bg-blue-500 rounded-lg"
               onClick={() => handleUpdate(author)}
             >
               Update
+            </button>
+            <button
+              className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
+              onClick={() => handleUpdate(author)}
+            >
+             Author Detail
             </button>
           </div>
         </div>
