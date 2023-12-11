@@ -9,12 +9,13 @@ export const AuthorList = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [authImage, setAuthImage] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [authorDetailModalOpen, setAuthorDetailModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
-    decs: "",
+    Decs: "",
     Gender: "",
     authDOB: "",
     imgAuth: "",
@@ -26,6 +27,7 @@ export const AuthorList = () => {
     setDeleteSuccess(false);
     setShowModal(true);
   };
+
   const confirmDelete = async () => {
     setLoading(true);
     try {
@@ -46,14 +48,23 @@ export const AuthorList = () => {
 
   const handleUpdate = (author) => {
     setUpdatedAuthor(author);
+    setSelectedAuthor({
+      id: author.id,
+      authName: author.authName,
+      Gender: author.Gender,
+      Decs: author.Decs,
+      authDOB: author.DOB,
+      imgAuth: author.imgAuth,
+    });
     setUpdateModalOpen(true);
   };
 
   const confirmUpdate = async () => {
     setLoading(true);
     try {
-      const authorRef = doc(db, "Author", selectedAuthor.authorId);
-      const imgRef = ref(imgDB, selectedAuthor.imageUrl);
+      const authorRef = doc(db, "Author", selectedAuthor.id);
+      console.log(selectedAuthor.id);
+      const imgRef = ref(imgDB, selectedAuthor.imgAuth);
 
       if (authImage) {
         // Upload the new image
@@ -64,7 +75,7 @@ export const AuthorList = () => {
         await updateDoc(authorRef, {
           authName: updatedAuthor.authName,
           Gender: updatedAuthor.Gender,
-          decs: updatedAuthor.decs,
+          Decs: updatedAuthor.Decs,
           authDOB: updatedAuthor.authDOB,
           imgAuth: newImgUrl,
         });
@@ -73,12 +84,12 @@ export const AuthorList = () => {
         await updateDoc(authorRef, {
           authName: updatedAuthor.authName,
           Gender: updatedAuthor.Gender,
-          decs: updatedAuthor.decs,
+          Decs: updatedAuthor.Decs,
           authDOB: updatedAuthor.authDOB,
         });
       }
-
       setDeleteSuccess(true);
+      alert("Update success");
     } catch (error) {
       console.error("Error updating document or image:", error.message);
     } finally {
@@ -86,10 +97,12 @@ export const AuthorList = () => {
       setUpdateModalOpen(false);
     }
   };
+
   const handleAuthorDetail = (author) => {
     setUpdatedAuthor(author);
     setAuthorDetailModalOpen(true);
   };
+
   useEffect(() => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
@@ -107,22 +120,20 @@ export const AuthorList = () => {
           <div className="ml-4">
             <p className="text-lg font-bold">{author.authName}</p>
             <p>{author.Gender}</p>
-            <p>{author.decs}</p>
             <p>{author.DOB}</p>
           </div>
           <div className="ml-auto flex">
-            <button
-              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded-lg"
-              onClick={() => handleDelete(author.id, author.imgAuth)}
-            >
-              Delete
-            </button>
-
             <button
               className="mr-2 bg-green-500 text-white p-2 active:bg-blue-500 rounded-lg"
               onClick={() => handleUpdate(author)}
             >
               Update
+            </button>
+            <button
+              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded-lg"
+              onClick={() => handleDelete(author.id, author.imgAuth)}
+            >
+              Delete
             </button>
             <button
               className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
@@ -133,7 +144,7 @@ export const AuthorList = () => {
           </div>
         </div>
       ))}
-
+      {/* Delete Modal */}
       <Modal
         isOpen={showModal}
         closeModal={() => setShowModal(false)}
@@ -143,15 +154,50 @@ export const AuthorList = () => {
       />
 
       {/* Update Modal */}
-      <div
-        className={`fixed inset-0 z-50 ${updateModalOpen ? "block" : "hidden"}`}
-        // onClick={() => setUpdateModalOpen(false)}
-      >
+      <div className={`fixed inset-0 z-50 ${updateModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-lg">
-            <h2 className="text-lg font-bold mb-4">Update Author</h2>
+            <h2 className="text-2xl font-bold mb-4">Update Author</h2>
 
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Name :</label>
+              <input
+                type="text"
+                className="mt-1 p-2 border rounded-md w-full"
+                value={updatedAuthor.authName}
+                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authName: e.target.value })}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Gender :</label>
+              <input
+                type="text"
+                className="mt-1 p-2 border rounded-md w-full"
+                value={updatedAuthor.Gender}
+                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, Gender: e.target.value })}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Description :</label>
+              <input
+                type="text"
+                className="mt-1 p-2 border rounded-md w-full"
+                value={updatedAuthor.Decs}
+                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, Decs: e.target.value })}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <input
+                type="text"
+                className="mt-1 p-2 border rounded-md w-full"
+                value={updatedAuthor.DOB}
+                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, DOB: e.target.value })}
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 New Image (leave empty to keep the existing image)
@@ -163,47 +209,6 @@ export const AuthorList = () => {
                 className="mt-1 p-2 border rounded-md w-full"
               />
             </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Gender</label>
-              <input
-                type="text"
-                className="mt-1 p-2 border rounded-md w-full"
-                value={updatedAuthor.Gender}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, Gender: e.target.value })}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Description</label>
-              <input
-                type="text"
-                className="mt-1 p-2 border rounded-md w-full"
-                value={updatedAuthor.decs}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, decs: e.target.value })}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input
-                type="text"
-                className="mt-1 p-2 border rounded-md w-full"
-                value={updatedAuthor.authDOB}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authDOB: e.target.value })}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Image URL</label>
-              <input
-                type="text"
-                className="mt-1 p-2 border rounded-md w-full"
-                value={updatedAuthor.imgAuth}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, imgAuth: e.target.value })}
-              />
-            </div>
-
             <div className="flex justify-end">
               <button className="mr-2 bg-green-500 text-white p-2 rounded" onClick={() => confirmUpdate()}>
                 Update
@@ -218,6 +223,7 @@ export const AuthorList = () => {
           </div>
         </div>
       </div>
+
       {/* Author Detail Modal */}
       <div
         className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}
@@ -225,15 +231,26 @@ export const AuthorList = () => {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-lg">
-            <h2 className="text-lg font-bold mb-4">Author Detail</h2>
-            <p>Name: {updatedAuthor.authName}</p>
-            <p>Gender: {updatedAuthor.Gender}</p>
-            <p>Description: {updatedAuthor.decs}</p>
-            <p>Date of Birth: {updatedAuthor.authDOB}</p>
-            <p>Image URL: <img src={updatedAuthor.imgAuth} /></p>
-
-            <div className="flex justify-end">
+          <div className="bg-white p-4 rounded shadow-xl mb-2">
+            <h2 className="text-2xl font-bold mb-4">Author Detail</h2>
+            <p className="flex text-xl font-bold ">
+              Name:
+              <p className="flex ml-4 text-gray-700 hover:text-sky-800">{updatedAuthor.authName}</p>
+            </p>
+            <p className="flex text-xl font-bold ">
+              Gender: <p className="flex ml-4 text-gray-700">{updatedAuthor.Gender}</p>
+            </p>
+            <p className="flex text-xl font-bold ">
+              Description:{" "}
+              <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased	">{updatedAuthor.Decs}</p>
+            </p>
+            <p className="flex text-xl font-bold ">
+              Date of Birth: <p className="flex ml-4 text-gray-700">{updatedAuthor.authDOB}</p>
+            </p>
+            <div className="flex w-full items-center justify-center ">
+              <img src={updatedAuthor.imgAuth} className="w-[500px] h-[500px] border-4 " />
+            </div>
+            <div className="flex justify-end mt-4">
               <button
                 className="bg-gray-500 text-white p-2 rounded"
                 onClick={() => setAuthorDetailModalOpen(false)}
