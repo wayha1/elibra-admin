@@ -11,8 +11,9 @@ export const AddAuthor = () => {
   const [authGender, setAuthGender] = useState("");
   const [authDOB, setAuthDOB] = useState("");
   const [authImage, setAuthImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(""); // New state for image URL
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successPopup, setSuccessPopup] = useState(false);
 
   const value = collection(db, "Author");
 
@@ -23,7 +24,8 @@ export const AddAuthor = () => {
     try {
       await uploadBytes(imgRef, authImage);
       const url = await getDownloadURL(imgRef);
-      setImageUrl(url); // Set the image URL
+      setImageUrl(url);
+
       await addDoc(value, {
         authName,
         Decs: authDecs,
@@ -32,53 +34,86 @@ export const AddAuthor = () => {
         imgAuth: url,
       });
 
-      alert("Author data & Image Upload");
+      setSuccessPopup(true);
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {}, [successPopup]);
+
   return (
     <div className="container flex flex-col m-2 space-y-5">
       <input
         value={authName}
         onChange={(e) => setAuthName(e.target.value)}
-        placeholder="ឈ្មោះ អ្នកនិពន្ធ"
-        className="p-2 "
+        placeholder="Author's Name"
+        className="p-2 border rounded-md focus:outline-none focus:border-blue-500"
       />
-      <input
+      <textarea
         value={authDecs}
         onChange={(e) => setAuthDecs(e.target.value)}
-        placeholder="ព័ត៌មានរបស់អ្នកនិពន្ធ"
-        className="p-2 "
+        placeholder="Author's Description"
+        className="p-2 border rounded-md focus:outline-none focus:border-blue-500"
       />
       <input
         value={authGender}
         onChange={(e) => setAuthGender(e.target.value)}
-        className="p-2"
-        placeholder="ភេទ"
+        placeholder="Gender"
+        className="p-2 border rounded-md focus:outline-none focus:border-blue-500"
       />
       <input
         value={authDOB}
         onChange={(e) => setAuthDOB(e.target.value)}
-        className="p-2"
-        placeholder="ថ្ងៃ ខែ ឆ្នាំ កំណើត"
+        placeholder="Date of Birth"
+        className="p-2 border rounded-md focus:outline-none focus:border-blue-500"
       />
-      <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
+      <div className="relative mt-2">
+        <label
+          htmlFor="imageInput"
+          className="inline-block bg-white px-4 py-2 rounded-md border border-gray-300 cursor-pointer"
+        >
+          <span className="flex items-center">
+            <FcAddImage className="mr-2" /> {authImage ? authImage.name : "Upload Image (4 x 6)"}
+          </span>
+        </label>
         <input
+          id="imageInput"
           type="file"
           onChange={(e) => setAuthImage(e.target.files[0])}
           accept="image/*"
-          className="font-[100px] absolute l-0 t-0 opacity-0"
+          className="hidden"
         />
-        <span className="flex text-3xl ">
-          <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
-        </span>
-      </label>
-      <button onClick={handleCreate} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
+        {authImage && <div className="absolute top-0 right-0 mt-2 mr-10 text-sky-500">Image uploaded!</div>}
+      </div>
+      <button
+        onClick={handleCreate}
+        className={`${
+          loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+        } w-32 rounded-lg p-2 text-white focus:outline-none`}
+        disabled={loading}
+      >
         {loading ? "Uploading..." : "Upload"}
       </button>
+
+      {successPopup && (
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-gray-500 opacity-75"
+            onClick={() => setSuccessPopup(false)}
+          ></div>
+          <div className="bg-white p-4 rounded-xl z-10">
+            <p className="text-lg font-semibold mb-4">Upload Successful</p>
+            <button
+              className="flex bg-blue-500 text-white p-2 rounded-xl"
+              onClick={() => setSuccessPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

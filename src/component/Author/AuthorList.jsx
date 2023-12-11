@@ -25,28 +25,6 @@ export const AuthorList = () => {
     setDeleteSuccess(false);
     setShowModal(true);
   };
-
-  const handleUpdate = (author) => {
-    setUpdatedAuthor(author);
-    setUpdateModalOpen(true);
-  };
-
-  const confirmUpdate = async () => {
-    setLoading(true);
-    try {
-      const authorRef = doc(db, "Author", selectedAuthor.authorId);
-
-      // Update the document with the new data
-      await setDoc(authorRef, updatedAuthor);
-      setDeleteSuccess(true);
-    } catch (error) {
-      console.error("Error updating document:", error.message);
-    } finally {
-      setLoading(false);
-      setUpdateModalOpen(false);
-    }
-  };
-
   const confirmDelete = async () => {
     setLoading(true);
     try {
@@ -65,6 +43,52 @@ export const AuthorList = () => {
     }
   };
 
+  const handleUpdate = (author) => {
+    setUpdatedAuthor(author);
+    setUpdateModalOpen(true);
+  };
+
+  const confirmUpdate = async () => {
+    setLoading(true);
+    try {
+      const authorRef = doc(db, "Author", selectedAuthor.authorId);
+      const imgRef = ref(imgDB, selectedAuthor.imageUrl);
+
+      if (authImage) {
+        // Upload the new image
+        const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
+        await uploadBytes(newImgRef, authImage);
+        const newImgUrl = await getDownloadURL(newImgRef);
+
+        // Delete the old image
+        await deleteObject(imgRef);
+
+        // Update the document with the new data including the new image URL
+        await updateDoc(authorRef, {
+          authName: updatedAuthor.authName,
+          Gender: updatedAuthor.Gender,
+          decs: updatedAuthor.decs,
+          authDOB: updatedAuthor.authDOB,
+          imgAuth: newImgUrl,
+        });
+      } else {
+        // Update the document without changing the image
+        await updateDoc(authorRef, {
+          authName: updatedAuthor.authName,
+          Gender: updatedAuthor.Gender,
+          decs: updatedAuthor.decs,
+          authDOB: updatedAuthor.authDOB,
+        });
+      }
+
+      setDeleteSuccess(true);
+    } catch (error) {
+      console.error("Error updating document or image:", error.message);
+    } finally {
+      setLoading(false);
+      setUpdateModalOpen(false);
+    }
+  };
   useEffect(() => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
@@ -122,12 +146,14 @@ export const AuthorList = () => {
             <h2 className="text-lg font-bold mb-4">Update Author</h2>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Author Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                New Image (leave empty to keep the existing image)
+              </label>
               <input
-                type="text"
+                type="file"
+                onChange={(e) => setAuthImage(e.target.files[0])}
+                accept="image/*"
                 className="mt-1 p-2 border rounded-md w-full"
-                value={updatedAuthor.authName}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authName: e.target.value })}
               />
             </div>
 

@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
 export const NovelBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
+  const [selectBook, setSelectBook] = useState({});
+  const [loading, setLoading] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  const handleDelete = async () => {
-    setDeleteSuccess(false);
-    setOpenDeleteModal(false);
+  const handleDelete = (bookId) => {
+    if (loading) return;
+    setSelectBook({ bookId });
+    setOpenDeleteModal(true);
   };
 
   const confirmDelete = async () => {
-    
-  }
+    setLoading(true);
+    try {
+      const bookRef = doc(db, "Books", "All_Genre", "Novel", selectBook.bookId);
+      await deleteDoc(bookRef);
+      setDeleteSuccess(true);
+      alert("Delete Successful!!");
+    } catch (error) {
+      console.error("Error deleting document or image:", error.message);
+    } finally {
+      setLoading(false);
+      setOpenDeleteModal(false);
+    }
+  };
 
   useEffect(() => {
     const getBacData = async () => {
@@ -24,7 +38,6 @@ export const NovelBookList = () => {
         const snapshot = await getDocs(contain);
         const data = snapshot.docs.map((val) => ({ ...val.data(), id: val.id }));
         setBacData(data);
-        console.log(data);
         const bookDataPromises = data.map(async (elem) => {
           try {
             const BookPop = collection(db, `Books/${elem.id}/Novel`);
@@ -48,7 +61,8 @@ export const NovelBookList = () => {
       }
     };
     getBacData();
-  }, []);
+  }, [deleteSuccess]);
+
   return (
     <section>
       <div className="container w-auto">
@@ -63,7 +77,7 @@ export const NovelBookList = () => {
               <div className="ml-auto flex">
                 <button
                   className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
-                  onClick={() => handleDelete(author.id, author.imgAuth)}
+                  onClick={() => handleDelete(item.id)}
                 >
                   Delete
                 </button>
@@ -74,6 +88,35 @@ export const NovelBookList = () => {
             </div>
           </div>
         ))}
+
+        {openDeleteModal && (
+          <div className="fixed inset-0 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-gray-500 opacity-75"
+              onClick={() => setOpenDeleteModal(false)}
+            ></div>
+            <div className="bg-white p-4 rounded-lg z-10">
+              <p className="text-lg font-semibold mb-4">Confirm Delete</p>
+              <p>Are you sure you want to delete this book?</p>
+              <div className="mt-4 flex justify-end">
+                <button
+                  className="mr-2 bg-red-500 text-white p-2 rounded"
+                  onClick={() => {
+                    confirmDelete();
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                  className="bg-gray-500 text-white p-2 rounded"
+                  onClick={() => setOpenDeleteModal(false)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

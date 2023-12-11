@@ -7,6 +7,7 @@ import { Aboutus } from "./component/Aboutus/Aboutus";
 import { Dashboard } from "./component/Dashboard/Dashboard";
 import { Account } from "./component/account/Account";
 import { AddAuthor } from "./component/Author/AddAuthor";
+import { AuthorList } from "./component/Author/AuthorList";
 function App() {
   return (
     <>
@@ -15,7 +16,9 @@ function App() {
         <Routes>
           {/* <Route path="/login" element={<Dashboard />}></Route> */}
           <Route path="/" element={<Homepage />}></Route>
-          <Route path="/dashboard" element={<Dashboard />}></Route>
+          <Route path="/dashboard" element={<Dashboard />}>
+            {/* <Route path="/author" element={<AuthorList/> } /> */}
+          </Route>
           <Route path="/aboutus" element={<Aboutus />}></Route>
           <Route path="/account" element={<Account />}></Route>
           <Route path="/inputauthor" element={<AddAuthor />}></Route>
