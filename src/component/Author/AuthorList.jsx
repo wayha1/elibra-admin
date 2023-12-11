@@ -10,6 +10,7 @@ export const AuthorList = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [authorDetailModalOpen, setAuthorDetailModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
@@ -85,6 +86,10 @@ export const AuthorList = () => {
       setUpdateModalOpen(false);
     }
   };
+  const handleAuthorDetail = (author) => {
+    setUpdatedAuthor(author);
+    setAuthorDetailModalOpen(true);
+  };
   useEffect(() => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
@@ -121,7 +126,7 @@ export const AuthorList = () => {
             </button>
             <button
               className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
-              onClick={() => handleUpdate(author)}
+              onClick={() => handleAuthorDetail(author)}
             >
               Author Detail
             </button>
@@ -208,6 +213,32 @@ export const AuthorList = () => {
                 onClick={() => setUpdateModalOpen(false)}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Author Detail Modal */}
+      <div
+        className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}
+        // onClick={() => setAuthorDetailModalOpen(false)}
+      >
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <h2 className="text-lg font-bold mb-4">Author Detail</h2>
+            <p>Name: {updatedAuthor.authName}</p>
+            <p>Gender: {updatedAuthor.Gender}</p>
+            <p>Description: {updatedAuthor.decs}</p>
+            <p>Date of Birth: {updatedAuthor.authDOB}</p>
+            <p>Image URL: <img src={updatedAuthor.imgAuth} /></p>
+
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-500 text-white p-2 rounded"
+                onClick={() => setAuthorDetailModalOpen(false)}
+              >
+                Close
               </button>
             </div>
           </div>
