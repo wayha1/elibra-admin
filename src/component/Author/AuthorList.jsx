@@ -59,8 +59,6 @@ export const AuthorList = () => {
         const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
         await uploadBytes(newImgRef, authImage);
         const newImgUrl = await getDownloadURL(newImgRef);
-
-        // Delete the old image
         await deleteObject(imgRef);
         await updateDoc(authorRef, {
           authName: updatedAuthor.authName,
@@ -125,7 +123,7 @@ export const AuthorList = () => {
               className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
               onClick={() => handleUpdate(author)}
             >
-             Author Detail
+              Author Detail
             </button>
           </div>
         </div>
