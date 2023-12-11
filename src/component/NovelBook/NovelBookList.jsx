@@ -5,6 +5,17 @@ import { db } from "../../firebase";
 export const NovelBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  const handleDelete = async () => {
+    setDeleteSuccess(false);
+    setOpenDeleteModal(false);
+  };
+
+  const confirmDelete = async () => {
+    
+  }
 
   useEffect(() => {
     const getBacData = async () => {
@@ -50,16 +61,16 @@ export const NovelBookList = () => {
                 <p className="">{item.price}</p>
               </div>
               <div className="ml-auto flex">
-            <button
-              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
-              onClick={() => handleDelete(author.id, author.imgAuth)}
-            >
-              Delete
-            </button>
-            <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded" onClick={() => {}}>
-              Update
-            </button>
-          </div>
+                <button
+                  className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded"
+                  onClick={() => handleDelete(author.id, author.imgAuth)}
+                >
+                  Delete
+                </button>
+                <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded" onClick={() => {}}>
+                  Update
+                </button>
+              </div>
             </div>
           </div>
         ))}
