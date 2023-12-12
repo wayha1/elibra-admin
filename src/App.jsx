@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./component/Homepage/Homepage";
 import { Navbar } from "./Navbar";
@@ -8,22 +8,23 @@ import { Dashboard } from "./component/Dashboard/Dashboard";
 import { Account } from "./component/account/Account";
 import { AddAuthor } from "./component/Author/AddAuthor";
 import { AuthorList } from "./component/Author/AuthorList";
+
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <Router>
         <Navbar />
         <Routes>
-          {/* <Route path="/login" element={<Dashboard />}></Route> */}
-          <Route path="/" element={<Homepage />}></Route>
-          <Route path="/dashboard" element={<Dashboard />}>
-            {/* <Route path="/author" element={<AuthorList/> } /> */}
-          </Route>
-          <Route path="/aboutus" element={<Aboutus />}></Route>
-          <Route path="/account" element={<Account />}></Route>
-          <Route path="/inputauthor" element={<AddAuthor />}></Route>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/aboutus" element={<Aboutus />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/inputauthor" element={<AddAuthor />} />
+          <Route path="/dashboard/author/list" element={<AuthorList />} />
+          {/* Add more routes for other components */}
+          {/* ... (more routes) */}
         </Routes>
-      </BrowserRouter>
+      </Router>
     </>
   );
 }
