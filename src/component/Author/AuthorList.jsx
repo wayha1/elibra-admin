@@ -3,6 +3,7 @@ import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase
 import { db, imgDB } from "../../firebase";
 import { ref, deleteObject } from "firebase/storage";
 import Modal from "./Modal";
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
 export const AuthorList = () => {
   const [authorList, setAuthorList] = useState([]);
@@ -37,7 +38,6 @@ export const AuthorList = () => {
       await deleteDoc(authorRef);
       await deleteObject(imgRef);
       setDeleteSuccess(true);
-      alert("Delete success!");
     } catch (error) {
       console.error("Error deleting document or image:", error.message);
     } finally {
@@ -152,6 +152,7 @@ export const AuthorList = () => {
         loading={loading}
         deleteSuccess={deleteSuccess}
       />
+      {loading && <LoadingProcess />}
 
       {/* Update Modal */}
       <div className={`fixed inset-0 z-50 ${updateModalOpen ? "block" : "hidden"}`}>

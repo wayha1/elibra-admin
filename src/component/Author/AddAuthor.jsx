@@ -3,6 +3,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { auth, db, imgDB } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 import { FcAddImage } from "react-icons/fc";
 
 export const AddAuthor = () => {
@@ -41,7 +42,7 @@ export const AddAuthor = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {}, [successPopup]);
+  useEffect(() => {}, [loading]);
 
   return (
     <div className="container flex flex-col m-2 space-y-5">
@@ -87,15 +88,20 @@ export const AddAuthor = () => {
         />
         {authImage && <div className="absolute top-0 right-0 mt-2 mr-10 text-sky-500">Image uploaded!</div>}
       </div>
-      <button
-        onClick={handleCreate}
-        className={`${
-          loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-        } w-32 rounded-lg p-2 text-white focus:outline-none`}
-        disabled={loading}
-      >
-        {loading ? "Uploading..." : "Upload"}
-      </button>
+      {loading ? (
+        <LoadingProcess />
+      ) : (
+        
+        <button
+          onClick={handleCreate}
+          className={`${
+            loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+          } w-32 rounded-lg p-2 text-white focus:outline-none`}
+          disabled={loading}
+        >
+          {loading ? "Uploading..." : "Upload"}
+        </button>
+      )}
 
       {successPopup && (
         <div className="fixed inset-0 flex items-center justify-center">

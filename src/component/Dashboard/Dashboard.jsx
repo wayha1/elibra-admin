@@ -37,7 +37,7 @@ export const Dashboard = () => {
                 window.location.pathname === "/dashboard/management"
                   ? "bg-gray-900 text-white"
                   : "bg-neutral-100"
-              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+              } w-full h-[70px]  border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
             >
               Management
             </Link>
@@ -66,7 +66,7 @@ export const Dashboard = () => {
           </li>
         </ul>
       </div>
-      <div className="flex-grow bg-neutral-200 w-[75%]">{renderContent()}</div>
+      <div className="flex-grow overflow-y-auto bg-neutral-200 w-[75%] ">{renderContent()}</div>
     </div>
   );
 };
