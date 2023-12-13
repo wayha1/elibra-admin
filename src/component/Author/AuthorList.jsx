@@ -266,7 +266,7 @@ export const AuthorList = () => {
             </div>
             <div className="flex justify-end mt-4">
               <button
-                className="bg-gray-500 text-white p-2 rounded"
+                className="bg-gray-500 text-white p-2 rounded hover:bg-gray-800"
                 onClick={() => setAuthorDetailModalOpen(false)}
               >
                 Close
