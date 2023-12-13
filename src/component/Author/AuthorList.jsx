@@ -116,9 +116,9 @@ export const AuthorList = () => {
   return (
     <div className="container w-auto">
       {authorList.map((author) => (
-        <div key={author.id} className="flex w-full items-center mb-4 p-4 bg-white rounded-lg">
+        <div key={author.id} className="flex w-full items-center mb-2 p-4 bg-white rounded-lg">
           <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
-          <div className="ml-4">
+          <div className="ml-8">
             <p className="text-lg font-bold">{author.authName}</p>
             <p>{author.Gender}</p>
             <p>{author.DOB}</p>

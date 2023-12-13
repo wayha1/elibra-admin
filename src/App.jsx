@@ -21,6 +21,7 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/inputauthor" element={<AddAuthor />} />
           <Route path="/dashboard/author/list" element={<AuthorList />} />
+          {/* <Route path="/das" */}
           {/* Add more routes for other components */}
           {/* ... (more routes) */}
         </Routes>

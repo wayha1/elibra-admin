@@ -2,7 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        navbar: ["Roboto", "sans-serif"],
+      },
+      fontFamily: {
+        custom: ['Inter', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 };

@@ -12,6 +12,7 @@ export const Dashboard = () => {
       case "/dashboard/management":
         return <Management />;
       case "/dashboard/author":
+        // navigate("/dashboard/author/list");
         return <Author />;
       case "/dashboard/novel-book":
         return <NovelBook />;
