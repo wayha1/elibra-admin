@@ -7,10 +7,13 @@ export default {
         navbar: ["Roboto", "sans-serif"],
       },
       fontFamily: {
-        custom: ['Inter', 'sans-serif'],
+        custom: ["Inter", "sans-serif"],
       },
       fontFamily: {
-        title: ['Arial', 'Helvetica', 'sans-serif'],
+        title: ["Arial", "Helvetica", "sans-serif"],
+      },
+      fontFamily: {
+        style: ["Brush Script MT", "cursive"],
       },
     },
   },
