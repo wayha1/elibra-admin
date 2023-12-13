@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { db, imgDB } from "../../firebase";
+import React, { useState, useEffect } from "react";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
-import {AuthorList} from "../Author/AuthorList"
+import { db, imgDB } from "../../firebase";
 
 export const NovelCrud = () => {
+  const [books, setBooks] = useState([]);
   const [Booktitle, setBooktitle] = useState("");
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
@@ -18,13 +18,29 @@ export const NovelCrud = () => {
   const [loading, setLoading] = useState(false);
 
   const value = collection(db, "Books", "All_Genre", "Novel");
+  const authorCollection = collection(db, "Author");
+
+  const fetchAuthors = async () => {
+    try {
+      const authorsSnapshot = await getDocs(authorCollection);
+      const authorsData = authorsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setAuthorList(authorsData);
+      console.log(authorList);
+    } catch (error) {
+      console.error("Error fetching authors:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchAuthors();
+  }, []);
 
   const handleAddBook = async () => {
     if (!BookCover || !BookPdf || loading) return;
     setLoading(true);
-
     const imgRef = ref(imgDB, `WebsiteProject/Books/${BookCover.name + uuidv4()}`);
     const pdfRef = ref(imgDB, `WebsiteProject/Books/${BookPdf.name + uuidv4()}`);
+
     try {
       // Upload image
       await uploadBytes(imgRef, BookCover);
@@ -42,6 +58,7 @@ export const NovelCrud = () => {
         date: BookDate,
         img: imageUrl,
         BookPdf: pdfUrl,
+        authorId: selectedAuthor, // Assuming you have an authorId field in your book document
       });
 
       alert("Book data & Image Upload");
@@ -63,32 +80,20 @@ export const NovelCrud = () => {
       setLoading(false);
     }
   };
+
   const handleDeleteBook = async (bookId) => {
     try {
       await deleteDoc(doc(value, bookId));
       alert("Book deleted successfully");
+
+      // Fetch updated books
+      const booksCollection = await getDocs(value);
+      setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error deleting book:", error.message);
     } finally {
       setLoading(false);
     }
-    const handleAuthorSelect = (authorId) => {
-      console.log(authorId)
-      setAuthorList(authorId);
-    };
-    useEffect(() => {
-      const authorCollection = collection(db, "Author");
-      const getAuthors = async () => {
-        try {
-          const authVal = await getDocs(authorCollection);
-          setSelectedAuthor(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-        } catch (error) {
-          console.error("Error fetching authors:", error.message);
-        }
-      };
-      getAuthors();
-    }, []);
-  
   };
 
   return (
@@ -117,11 +122,7 @@ export const NovelCrud = () => {
         className="p-2"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
-       <select
-        value={selectedAuthor}
-        onChange={(e) => setSelectedAuthor(e.target.value)}
-        className="p-2"
-      >
+      <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
         <option value="">Select an Author</option>
         {authorList.map((author) => (
           <option key={author.id} value={author.id}>
