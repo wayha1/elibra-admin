@@ -25,7 +25,6 @@ export const NovelCrud = () => {
       const authorsSnapshot = await getDocs(authorCollection);
       const authorsData = authorsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setAuthorList(authorsData);
-      console.log(authorList);
     } catch (error) {
       console.error("Error fetching authors:", error.message);
     }
