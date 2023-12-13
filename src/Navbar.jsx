@@ -9,10 +9,10 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-blue-700 ">
+      <nav className="navbar navbar-expand-lg bg-gray-700">
         <div className="flex space-x-10 justify-between w-screen">
           <a className="ml-5 navbar-brand text-light" href="/dashboard">
-            Dashboard
+            E-Libra Dashboard
           </a>
           <div className="flex mx-4">
             <a className="navbar-brand text-light" href="/">
@@ -25,7 +25,7 @@ export const Navbar = () => {
             <div className="dropdown flex" onClick={toggleAccountDropdown}>
               <a
                 className="navbar-brand text-light dropdown-toggle "
-                href="/account"
+                // href="/account"
                 role="button"
                 id="accountDropdown"
                 data-toggle="dropdown"

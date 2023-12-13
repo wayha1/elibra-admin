@@ -28,6 +28,8 @@ export const Dashboard = () => {
         return <PracticeBook />;
       case "/dashboard/math-book":
         return <Mathematic />;
+      case "/dashboard/math-book":
+        return <Mathematic />;
       default:
         return (
           <div className="text-center text-2xl font-medium">
@@ -40,9 +42,9 @@ export const Dashboard = () => {
   return (
     <div className="w-full h-screen flex">
       <div className="flex flex-col w-[25%] h-screen bg-neutral-300 bg-shadow-lg">
-        <p className="mt-10 text-center text-cyan-600 text-3xl font-sans uppercase font-bold">Dashboard</p>
+        <p className="my-3 text-center text-gray-800 text-4xl font-title font-bold">Welcome Admin</p>
 
-        <ul className="mt-20 duration-300 whitespace-nowrap">
+        <ul className="my-5 duration-300 whitespace-nowrap">
           <li className="flex items-center justify-center">
             <Link
               to="/dashboard/management"
