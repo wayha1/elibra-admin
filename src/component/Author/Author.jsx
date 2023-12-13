@@ -42,7 +42,7 @@ export const Author = () => {
                 activeComponent === crud.name
                   ? " hover:bg-shadow-xl text-gray-700"
                   : "text-gray-400 hover:underline hover:text-gray-700 hover:bg-gray-100 hover:rounded-lg hover:bg-shadow-xl"
-              } cursor-pointer font-custom font-bold text-center text-2xl p-2 hover:bg-shadow-xl text-gray-200`}
+              } cursor-pointer font-navbar font-bold text-center text-2xl p-2 hover:bg-shadow-xl text-gray-200`}
               onClick={() => handleComponentChange(crud.name)}
             >
               {crud.name}

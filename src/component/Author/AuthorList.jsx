@@ -100,7 +100,7 @@ export const AuthorList = () => {
 
   const handleAuthorDetail = (author) => {
     setUpdatedAuthor(author);
-    console.log(author)
+    console.log(author);
     setAuthorDetailModalOpen(true);
   };
 
@@ -119,9 +119,9 @@ export const AuthorList = () => {
         <div key={author.id} className="flex w-full items-center mb-2 p-4 bg-white rounded-lg">
           <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
           <div className="ml-8">
-            <p className="text-lg font-bold">{author.authName}</p>
-            <p>{author.Gender}</p>
-            <p>{author.DOB}</p>
+            <p className="text-lg font-bold font-title">{author.authName}</p>
+            <p className="font-title">{author.Gender}</p>
+            <p className="font-title">{author.DOB}</p>
           </div>
           <div className="ml-auto flex">
             <button

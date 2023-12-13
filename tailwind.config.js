@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         custom: ['Inter', 'sans-serif'],
       },
+      fontFamily: {
+        title: ['Arial', 'Helvetica', 'sans-serif'],
+      },
     },
   },
   plugins: [],
