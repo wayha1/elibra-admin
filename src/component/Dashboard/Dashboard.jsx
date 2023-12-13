@@ -3,6 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Management } from "../../Management";
 import { Author } from "../Author/Author";
 import { NovelBook } from "../NovelBook/NovelBook";
+import { BaciiBook } from "../BacIIBook/BaciiBook";
+import { ComicBook } from "../ComicBook/ComicBook";
+import { PracticeBook } from "../PracticeBook/PracticeBook";
+import { Mathematic } from "../Mathematic/Mathematic";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -14,8 +18,16 @@ export const Dashboard = () => {
       case "/dashboard/author":
         // navigate("/dashboard/author/list");
         return <Author />;
+      case "/dashboard/bacii-book":
+        return <BaciiBook />;
       case "/dashboard/novel-book":
         return <NovelBook />;
+      case "/dashboard/comic-book":
+        return <ComicBook />;
+      case "/dashboard/practice-book":
+        return <PracticeBook />;
+      case "/dashboard/math-book":
+        return <Mathematic />;
       default:
         return (
           <div className="text-center text-2xl font-medium">
@@ -30,7 +42,7 @@ export const Dashboard = () => {
       <div className="flex flex-col w-[25%] h-screen bg-neutral-300 bg-shadow-lg">
         <p className="mt-10 text-center text-cyan-600 text-3xl font-sans uppercase font-bold">Dashboard</p>
 
-        <ul className="mt-20 duration-300">
+        <ul className="mt-20 duration-300 whitespace-nowrap">
           <li className="flex items-center justify-center">
             <Link
               to="/dashboard/management"
@@ -55,6 +67,18 @@ export const Dashboard = () => {
           </li>
           <li className="flex items-center justify-center">
             <Link
+              to="/dashboard/bacii-book"
+              className={`${
+                window.location.pathname === "/dashboard/bacii-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ ក្រសួង
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
               to="/dashboard/novel-book"
               className={`${
                 window.location.pathname === "/dashboard/novel-book"
@@ -63,6 +87,42 @@ export const Dashboard = () => {
               } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
             >
               សៀវភៅ ប្រលោមលោក
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
+              to="/dashboard/comic-book"
+              className={`${
+                window.location.pathname === "/dashboard/comic-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ ជីវចល
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
+              to="/dashboard/practice-book"
+              className={`${
+                window.location.pathname === "/dashboard/practice-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ លំហាត់
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
+              to="/dashboard/math-book"
+              className={`${
+                window.location.pathname === "/dashboard/math-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ គណិតវិទ្យា
             </Link>
           </li>
         </ul>

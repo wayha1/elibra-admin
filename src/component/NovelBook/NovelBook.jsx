@@ -30,18 +30,18 @@ export const NovelBook = () => {
     }
   };
   return (
-    <div className="flex flex-col w-auto">
+    <div className="flex flex-col ">
       {/* Header */}
-      <div className="bg-shadow-lg p-4 bg-neutral-500 ">
-        <ul className="flex items-center justify-center">
+      
+        <ul className="flex items-center justify-center bg-shadow-lg py-3 bg-white ">
           {BookHead.map((head) => (
-            <li key={head.id} className="mr-4">
+            <li key={head.id} className="hover:scale-110 transition duration-150 ease-in-out whitespace-nowrap">
               <span
                 className={`${
                   activeComponent === head.name
-                    ? "bg-red-500 hover:bg-shadow-xl hover:bg-red-600 rounded-xl text-gray-200"
-                    : "text-neutral-100"
-                } cursor-pointer font-medium text-center text-2xl p-2 bg-blue-700 hover:bg-shadow-xl hover:bg-blue-600 rounded-xl text-gray-200`}
+                    ? " hover:bg-shadow-xl text-gray-700"
+                    : "text-gray-400 hover:underline hover:text-gray-700 hover:bg-gray-100 hover:rounded-lg hover:bg-shadow-xl"
+                } cursor-pointer font-navbar font-bold text-center text-2xl p-2 hover:bg-shadow-xl text-gray-200`}
                 onClick={() => handleComponentChange(head.name)}
               >
                 {head.name}
@@ -49,10 +49,12 @@ export const NovelBook = () => {
             </li>
           ))}
         </ul>
-      </div>
+   
 
       {/* Content Section */}
-      <div className="flex-grow bg-neutral-200 p-4">{renderContent()}</div>
+      <div className="flex-grow bg-neutral-200 px-4 py-3 transition duration-150 ease-in-out">
+        {renderContent()}
+      </div>
     </div>
   );
 };
