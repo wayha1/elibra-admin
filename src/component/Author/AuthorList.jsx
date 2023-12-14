@@ -100,6 +100,7 @@ export const AuthorList = () => {
 
   const handleAuthorDetail = (author) => {
     setUpdatedAuthor(author);
+    console.log(author)
     setAuthorDetailModalOpen(true);
   };
 
@@ -108,6 +109,7 @@ export const AuthorList = () => {
     const getAuthors = async () => {
       const authVal = await getDocs(value);
       setAuthorList(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      console.log(authorList)
     };
     getAuthors();
   }, [deleteSuccess, updateModalOpen]);

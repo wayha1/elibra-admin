@@ -55,7 +55,6 @@ export const NovelBookList = () => {
 
         const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
         setNovelBook(bookData);
-        console.log(bookData);
       } catch (error) {
         console.error("Error fetching popular section data:", error);
       }

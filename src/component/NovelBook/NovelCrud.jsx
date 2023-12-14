@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db, imgDB } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
+import {AuthorList} from "../Author/AuthorList"
 
 export const NovelCrud = () => {
   const [Booktitle, setBooktitle] = useState("");
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
+  const [authorList, setAuthorList] = useState([]);
+  const [selectedAuthor, setSelectedAuthor] = useState("");
   const [BookCover, setBookCover] = useState(null);
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -69,7 +72,23 @@ export const NovelCrud = () => {
     } finally {
       setLoading(false);
     }
-    useEffect();
+    const handleAuthorSelect = (authorId) => {
+      console.log(authorId)
+      setAuthorList(authorId);
+    };
+    useEffect(() => {
+      const authorCollection = collection(db, "Author");
+      const getAuthors = async () => {
+        try {
+          const authVal = await getDocs(authorCollection);
+          setSelectedAuthor(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        } catch (error) {
+          console.error("Error fetching authors:", error.message);
+        }
+      };
+      getAuthors();
+    }, []);
+  
   };
 
   return (
@@ -98,6 +117,18 @@ export const NovelCrud = () => {
         className="p-2"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
+       <select
+        value={selectedAuthor}
+        onChange={(e) => setSelectedAuthor(e.target.value)}
+        className="p-2"
+      >
+        <option value="">Select an Author</option>
+        {authorList.map((author) => (
+          <option key={author.id} value={author.id}>
+            {author.authName}
+          </option>
+        ))}
+      </select>
       <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
         <input
           type="file"
