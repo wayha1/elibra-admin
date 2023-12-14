@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AddAuthor } from "./AddAuthor";
 import { AuthorList } from "./AuthorList";
-import { SeachAuthor } from "./SeachAuthor";
+import  SeachAuthor  from "./SeachAuthor";
 // import { db } from "../../firebase";
 // import { Link, useLocation } from "react-router-dom";
 
