@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { db, imgDB } from "../../firebase";
-import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  deleteObject,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import Modal from "./Modal";
 import SeachAuthor from "./SeachAuthor";
 import { v4 as uuidv4 } from "uuid";
@@ -18,6 +30,13 @@ export const AuthorList = () => {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [fullAuthorList, setFullAuthorList] = useState([]);
+  const [maleAuthorList, setMaleAuthorList] = useState([]);
+  const [femaleAuthorList, setFemaleAuthorList] = useState([]);
+
+  // State variable for sorting order
+  const [sortOrder, setSortOrder] = useState("asc");
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
     Decs: "",
@@ -67,7 +86,10 @@ export const AuthorList = () => {
       };
 
       if (authImage) {
-        const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
+        const newImgRef = ref(
+          imgDB,
+          `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`
+        );
         await uploadBytes(newImgRef, authImage);
         const newImgUrl = await getDownloadURL(newImgRef);
         newData.imgAuth = newImgUrl;
@@ -92,14 +114,55 @@ export const AuthorList = () => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
       const authVal = await getDocs(value);
-      setAuthorList(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      const authors = authVal.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setFullAuthorList(authors);
+      setAuthorList(authors); // Set the default list to the full list
+      // Separate male and female lists
+      const maleAuthors = authors.filter(
+        (author) => author.Gender.toLowerCase() === "ប្រុស"
+      );
+      const femaleAuthors = authors.filter(
+        (author) => author.Gender.toLowerCase() === "ស្រី"
+      );
+
+      setMaleAuthorList(maleAuthors);
+      setFemaleAuthorList(femaleAuthors);
     };
     getAuthors();
   }, [deleteSuccess, updateSuccess]);
 
+  const handleSort = (gender) => {
+    // Set the current list based on the selected gender
+    switch (gender) {
+      case "ប្រុស":
+        setAuthorList(maleAuthorList);
+        break;
+      case "ស្រី":
+        setAuthorList(femaleAuthorList);
+        break;
+      default:
+        setAuthorList(fullAuthorList);
+        break;
+    }
+  };
   return (
     <div className="container w-auto">
       <SeachAuthor />
+      {/* Dropdown selector for sorting */}
+      {/* Dropdown selector for sorting */}
+      <div className="flex space-x-4 mb-4 ">
+        <select
+          className="p-2 border rounded-md w-full"
+          onChange={(e) => handleSort(e.target.value)}
+        >
+          <option value="">See All</option>
+          <option value="ប្រុស">ប្រុស (Male)</option>
+          <option value="ស្រី">ស្រី (Female)</option>
+        </select>
+      </div>
       {authorList.map((author) => (
         <div
           key={author.id}
@@ -109,7 +172,11 @@ export const AuthorList = () => {
           onMouseEnter={() => setHoveredAuthor(author.id)}
           onMouseLeave={() => setHoveredAuthor(null)}
         >
-          <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
+          <img
+            src={author.imgAuth}
+            alt={author.authName}
+            className="w-40 h-50"
+          />
           <div className="ml-8">
             <p className="text-lg font-bold font-title">{author.authName}</p>
             <p className="font-title">{author.Gender}</p>
@@ -155,7 +222,10 @@ export const AuthorList = () => {
           <div className="absolute inset-0 flex items-center justify-center ">
             <div className="bg-white p-4 rounded shadow-lg">
               <p className="mb-4">Delete successful!</p>
-              <button className="bg-gray-500 text-white p-2 rounded" onClick={() => setDeleteSuccess(false)}>
+              <button
+                className="bg-gray-500 text-white p-2 rounded"
+                onClick={() => setDeleteSuccess(false)}
+              >
                 Close
               </button>
             </div>
@@ -164,7 +234,9 @@ export const AuthorList = () => {
       )}
 
       {/* Update Modal */}
-      <div className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}>
+      <div
+        className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}
+      >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-lg">
@@ -172,41 +244,63 @@ export const AuthorList = () => {
 
             {/* Update input fields to allow user input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Name :</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Name :
+              </label>
               <input
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={updatedAuthor.authName}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authName: e.target.value })}
+                onChange={(e) =>
+                  setUpdatedAuthor({
+                    ...updatedAuthor,
+                    authName: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Gender :</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Gender :
+              </label>
               <input
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={updatedAuthor.Gender}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, Gender: e.target.value })}
+                onChange={(e) =>
+                  setUpdatedAuthor({ ...updatedAuthor, Gender: e.target.value })
+                }
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Description :</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Description :
+              </label>
               <input
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={updatedAuthor.Decs}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, Decs: e.target.value })}
+                onChange={(e) =>
+                  setUpdatedAuthor({ ...updatedAuthor, Decs: e.target.value })
+                }
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date of Birth
+              </label>
               <input
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={updatedAuthor.DOB}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authDOB: e.target.value })}
+                onChange={(e) =>
+                  setUpdatedAuthor({
+                    ...updatedAuthor,
+                    authDOB: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="mb-4">
@@ -221,7 +315,10 @@ export const AuthorList = () => {
               />
             </div>
             <div className="flex justify-end">
-              <button className="mr-2 bg-green-500 text-white p-2 rounded" onClick={() => confirmUpdate()}>
+              <button
+                className="mr-2 bg-green-500 text-white p-2 rounded"
+                onClick={() => confirmUpdate()}
+              >
                 Update
               </button>
               <button
@@ -237,6 +334,7 @@ export const AuthorList = () => {
 
       {/* Loading Process during Update */}
       {loading && updateModalOpen && <LoadingProcess />}
+      {/* Button for sorting */}
 
       {/* Update Success Modal */}
       {updateSuccess && (
@@ -245,7 +343,10 @@ export const AuthorList = () => {
           <div className="absolute inset-0 flex items-center justify-center ">
             <div className="bg-white p-4 rounded shadow-lg">
               <p className="mb-4">Update successful!</p>
-              <button className="bg-gray-500 text-white p-2 rounded" onClick={() => setUpdateSuccess(false)}>
+              <button
+                className="bg-gray-500 text-white p-2 rounded"
+                onClick={() => setUpdateSuccess(false)}
+              >
                 Close
               </button>
             </div>
@@ -254,27 +355,40 @@ export const AuthorList = () => {
       )}
 
       {/* Author Detail Modal */}
-      <div className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}>
+      <div
+        className={`fixed inset-0 z-50 ${
+          authorDetailModalOpen ? "block" : "hidden"
+        }`}
+      >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-xl mb-2">
             <h2 className="text-2xl font-bold mb-4">Author Detail</h2>
             <p className="flex text-xl font-bold ">
               Name:
-              <p className="flex ml-4 text-gray-700 hover:text-sky-800">{updatedAuthor.authName}</p>
+              <p className="flex ml-4 text-gray-700 hover:text-sky-800">
+                {updatedAuthor.authName}
+              </p>
             </p>
             <p className="flex text-xl font-bold ">
-              Gender: <p className="flex ml-4 text-gray-700">{updatedAuthor.Gender}</p>
+              Gender:{" "}
+              <p className="flex ml-4 text-gray-700">{updatedAuthor.Gender}</p>
             </p>
             <p className="flex text-xl font-bold ">
               Description:{" "}
-              <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased	">{updatedAuthor.Decs}</p>
+              <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased	">
+                {updatedAuthor.Decs}
+              </p>
             </p>
             <p className="flex text-xl font-bold ">
-              Date of Birth: <p className="flex ml-4 text-gray-700">{updatedAuthor.authDOB}</p>
+              Date of Birth:{" "}
+              <p className="flex ml-4 text-gray-700">{updatedAuthor.authDOB}</p>
             </p>
             <div className="flex w-full items-center justify-center ">
-              <img src={updatedAuthor.imgAuth} className="w-[500px] h-[500px] border-4 " />
+              <img
+                src={updatedAuthor.imgAuth}
+                className="w-[500px] h-[500px] border-4 "
+              />
             </div>
             <div className="flex justify-end mt-4">
               <button

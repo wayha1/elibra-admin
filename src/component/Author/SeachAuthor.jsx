@@ -55,7 +55,7 @@ const SeachAuthor = () => {
       </div>
       
       ) : (
-        <p className="text-red-500">Author not found</p>
+        <p className="text-red-500"></p>
       )}
     </div>
   );
