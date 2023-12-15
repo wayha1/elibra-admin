@@ -153,12 +153,12 @@ export const AuthorList = () => {
       <SeachAuthor />
       {/* Dropdown selector for sorting */}
       {/* Dropdown selector for sorting */}
-      <div className="flex space-x-4 mb-4 ">
+      <div className="flex mb-4 pr-4 w-full justify-end ">
         <select
-          className="p-2 border rounded-md w-full"
+          className="p-2 border rounded-md "
           onChange={(e) => handleSort(e.target.value)}
         >
-          <option value="">See All</option>
+          <option value="">Sort : ទាំងអស់ (All)</option>
           <option value="ប្រុស">ប្រុស (Male)</option>
           <option value="ស្រី">ស្រី (Female)</option>
         </select>

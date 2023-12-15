@@ -26,8 +26,8 @@ const SeachAuthor = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-4 flex">
+    <div className="container mx-auto p-2">
+      <div className="my-2 flex">
         <input
           type="text"
           placeholder="Search author"
