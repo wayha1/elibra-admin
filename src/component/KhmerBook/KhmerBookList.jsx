@@ -4,6 +4,7 @@ import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
+import SeachAuthor from "../Author/SeachAuthor";
 
 const KhmerBookList = () => {
   const [bacData, setBacData] = useState([]);
@@ -118,6 +119,7 @@ const KhmerBookList = () => {
   return (
     <section>
       <div className="container w-auto">
+        <SeachAuthor />
         {NovelBook.map((item, index) => (
           <div key={index} className="flex items-center mb-4 p-4 bg-white rounded-lg ">
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
