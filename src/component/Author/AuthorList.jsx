@@ -3,6 +3,7 @@ import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase
 import { db, imgDB } from "../../firebase";
 import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
 import Modal from "./Modal";
+import SeachAuthor from "./SeachAuthor";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
@@ -98,6 +99,7 @@ export const AuthorList = () => {
 
   return (
     <div className="container w-auto">
+      <SeachAuthor />
       {authorList.map((author) => (
         <div
           key={author.id}

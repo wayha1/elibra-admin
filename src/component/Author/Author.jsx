@@ -7,7 +7,7 @@ export const Author = () => {
   const [CRUD, setCRUD] = useState([
     { id: 1, name: "Author List" },
     { id: 2, name: "Add Author" },
-    { id: 3, name: "Search Author" },
+    // { id: 3, name: "Search Author" },
   ]);
   const [activeComponent, setActiveComponent] = useState("Author List");
 
