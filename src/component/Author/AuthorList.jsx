@@ -14,6 +14,7 @@ export const AuthorList = () => {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [authorDetailModalOpen, setAuthorDetailModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [hoveredAuthor, setHoveredAuthor] = useState(null);
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
     Decs: "",
@@ -116,7 +117,12 @@ export const AuthorList = () => {
   return (
     <div className="container w-auto">
       {authorList.map((author) => (
-        <div key={author.id} className="flex w-full items-center mb-2 p-4 bg-white rounded-lg">
+        <div
+        key={author.id}
+        className={`flex w-full items-center mb-2 p-4 rounded-lg ${hoveredAuthor === author.id ? "bg-blue-200" : "bg-white"}`}
+        onMouseEnter={() => setHoveredAuthor(author.id)}
+        onMouseLeave={() => setHoveredAuthor(null)}
+      >
           <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
           <div className="ml-8">
             <p className="text-lg font-bold font-title">{author.authName}</p>
