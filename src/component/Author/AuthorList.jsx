@@ -151,8 +151,6 @@ export const AuthorList = () => {
   return (
     <div className="container w-auto">
       <SeachAuthor />
-      {/* Dropdown selector for sorting */}
-      {/* Dropdown selector for sorting */}
       <div className="flex mb-4 pr-4 w-full justify-end ">
         <select
           className="p-2 border rounded-md "
