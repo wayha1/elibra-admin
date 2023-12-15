@@ -6,7 +6,7 @@ export const NovelBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
-  const [authorData, setAuthorData] = useState({});
+  // const [authorData, setAuthorData] = useState({});
   const [loading, setLoading] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);

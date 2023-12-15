@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db, imgDB } from "../../firebase";
-import { ref, deleteObject } from "firebase/storage";
+import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
 import Modal from "./Modal";
+import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
 export const AuthorList = () => {
@@ -11,10 +12,11 @@ export const AuthorList = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [authImage, setAuthImage] = useState(null);
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [authorDetailModalOpen, setAuthorDetailModalOpen] = useState(false);
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [hoveredAuthor, setHoveredAuthor] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
     Decs: "",
@@ -49,48 +51,29 @@ export const AuthorList = () => {
 
   const handleUpdate = (author) => {
     setUpdatedAuthor(author);
-    setSelectedAuthor({
-      id: author.id,
-      authName: author.authName,
-      Gender: author.Gender,
-      Decs: author.Decs,
-      authDOB: author.DOB,
-      imgAuth: author.imgAuth,
-    });
     setUpdateModalOpen(true);
   };
-
   const confirmUpdate = async () => {
     setLoading(true);
     try {
-      const authorRef = doc(db, "Author", selectedAuthor.id);
-      console.log(selectedAuthor.id);
-      const imgRef = ref(imgDB, selectedAuthor.imgAuth);
+      const authorRef = doc(db, "Author", updatedAuthor.id);
+      const imgRef = ref(imgDB, updatedAuthor.imgAuth);
+      const newData = {
+        authName: updatedAuthor.authName,
+        Gender: updatedAuthor.Gender,
+        Decs: updatedAuthor.Decs,
+        authDOB: updatedAuthor.authDOB,
+      };
 
       if (authImage) {
-        // Upload the new image
         const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
         await uploadBytes(newImgRef, authImage);
         const newImgUrl = await getDownloadURL(newImgRef);
-        await deleteObject(imgRef);
-        await updateDoc(authorRef, {
-          authName: updatedAuthor.authName,
-          Gender: updatedAuthor.Gender,
-          Decs: updatedAuthor.Decs,
-          authDOB: updatedAuthor.authDOB,
-          imgAuth: newImgUrl,
-        });
-      } else {
-        // Update the document without changing the image
-        await updateDoc(authorRef, {
-          authName: updatedAuthor.authName,
-          Gender: updatedAuthor.Gender,
-          Decs: updatedAuthor.Decs,
-          authDOB: updatedAuthor.authDOB,
-        });
+        newData.imgAuth = newImgUrl;
       }
-      setDeleteSuccess(true);
-      alert("Update success");
+
+      await updateDoc(authorRef, newData);
+      setUpdateSuccess(true); // Set updateSuccess to true on successful update
     } catch (error) {
       console.error("Error updating document or image:", error.message);
     } finally {
@@ -101,7 +84,6 @@ export const AuthorList = () => {
 
   const handleAuthorDetail = (author) => {
     setUpdatedAuthor(author);
-    console.log(author);
     setAuthorDetailModalOpen(true);
   };
 
@@ -112,17 +94,19 @@ export const AuthorList = () => {
       setAuthorList(authVal.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
     getAuthors();
-  }, [deleteSuccess, updateModalOpen]);
+  }, [deleteSuccess, updateSuccess]);
 
   return (
     <div className="container w-auto">
       {authorList.map((author) => (
         <div
-        key={author.id}
-        className={`flex w-full items-center mb-2 p-4 rounded-lg ${hoveredAuthor === author.id ? "bg-blue-200" : "bg-white"}`}
-        onMouseEnter={() => setHoveredAuthor(author.id)}
-        onMouseLeave={() => setHoveredAuthor(null)}
-      >
+          key={author.id}
+          className={`flex w-full items-center mb-2 p-4 rounded-lg ${
+            hoveredAuthor === author.id ? "bg-blue-200" : "bg-white"
+          }`}
+          onMouseEnter={() => setHoveredAuthor(author.id)}
+          onMouseLeave={() => setHoveredAuthor(null)}
+        >
           <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
           <div className="ml-8">
             <p className="text-lg font-bold font-title">{author.authName}</p>
@@ -175,12 +159,13 @@ export const AuthorList = () => {
         </div>
       )}
       {/* Update Modal */}
-      <div className={`fixed inset-0 z-50 ${updateModalOpen ? "block" : "hidden"}`}>
+      <div className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-lg">
             <h2 className="text-2xl font-bold mb-4">Update Author</h2>
 
+            {/* Update input fields to allow user input */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Name :</label>
               <input
@@ -216,7 +201,7 @@ export const AuthorList = () => {
                 type="text"
                 className="mt-1 p-2 border rounded-md w-full"
                 value={updatedAuthor.DOB}
-                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, DOB: e.target.value })}
+                onChange={(e) => setUpdatedAuthor({ ...updatedAuthor, authDOB: e.target.value })}
               />
             </div>
             <div className="mb-4">
@@ -244,7 +229,22 @@ export const AuthorList = () => {
           </div>
         </div>
       </div>
-
+      {/* Loading Process during Update */}
+      {loading && updateModalOpen && <LoadingProcess />}
+      {/* Update Success Modal */}
+      {updateSuccess && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <div className="absolute inset-0 flex items-center justify-center ">
+            <div className="bg-white p-4 rounded shadow-lg">
+              <p className="mb-4">Update successful!</p>
+              <button className="bg-gray-500 text-white p-2 rounded" onClick={() => setUpdateSuccess(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Author Detail Modal */}
       <div
         className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}
