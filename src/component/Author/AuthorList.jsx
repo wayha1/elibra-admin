@@ -143,7 +143,9 @@ export const AuthorList = () => {
         loading={loading}
         deleteSuccess={deleteSuccess}
       />
+
       {loading && <LoadingProcess />}
+
       {/* Delete Success Modal */}
       {deleteSuccess && (
         <div className="fixed inset-0 z-50">
@@ -158,6 +160,7 @@ export const AuthorList = () => {
           </div>
         </div>
       )}
+
       {/* Update Modal */}
       <div className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -229,8 +232,10 @@ export const AuthorList = () => {
           </div>
         </div>
       </div>
+
       {/* Loading Process during Update */}
       {loading && updateModalOpen && <LoadingProcess />}
+
       {/* Update Success Modal */}
       {updateSuccess && (
         <div className="fixed inset-0 z-50">
@@ -245,11 +250,9 @@ export const AuthorList = () => {
           </div>
         </div>
       )}
+
       {/* Author Detail Modal */}
-      <div
-        className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}
-        // onClick={() => setAuthorDetailModalOpen(false)}
-      >
+      <div className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow-xl mb-2">

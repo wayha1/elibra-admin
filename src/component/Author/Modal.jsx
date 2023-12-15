@@ -1,14 +1,10 @@
-// Import the LoadingProcess component
-import { LoadingProcess } from "../LoadingProcess/LoadingProcess"; // Adjust the import path based on your project structure
-
-// Import other dependencies as needed
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
 const Modal = ({ isOpen, closeModal, onConfirm, loading }) => {
   const handleConfirm = async () => {
     await onConfirm();
     closeModal();
   };
-
   return (
     <div className={`fixed inset-0 z-50 ${isOpen ? "block" : "hidden"}`} onClick={closeModal}>
       <div className="absolute inset-0 bg-black opacity-50"></div>
