@@ -20,7 +20,7 @@ function App() {
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/account" element={<Account />} />
           <Route path="/inputauthor" element={<AddAuthor />} />
-          {/* <Route path="/dashboard/author/list" element={<AuthorList />} /> */}
+          <Route path="/dashboard/author/list" element={<AuthorList />} />
           {/* <Route path="/das" */}
           {/* Add more routes for other components */}
           {/* ... (more routes) */}

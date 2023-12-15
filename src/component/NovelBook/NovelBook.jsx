@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NovelBookList } from "./NovelBookList";
 import { NovelCrud } from "./NovelCrud";
 import { SearchNovelBook } from "./SearchNovelBook";

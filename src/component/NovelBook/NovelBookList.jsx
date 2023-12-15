@@ -6,6 +6,7 @@ export const NovelBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
+  const [authorData, setAuthorData] = useState({});
   const [loading, setLoading] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -55,12 +56,33 @@ export const NovelBookList = () => {
 
         const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
         setNovelBook(bookData);
+        console.log(NovelBook);
       } catch (error) {
         console.error("Error fetching popular section data:", error);
       }
     };
     getBacData();
-  }, [deleteSuccess]);
+
+    // // Moved fetchAuthorData outside of getBacData
+    // const fetchAuthorData = async () => {
+    //   try {
+    //     const authorId = selectBook.authorId;
+    //     const authorDoc = doc(db, "Authors", authorId);
+    //     const authorSnapshot = await getDocs(authorDoc);
+    //     const author = authorSnapshot.data();
+    //     setAuthorData(author);
+    //     console.log(authorData);
+    //     console.log(authorId)
+    //   } catch (error) {
+    //     console.error("Error fetching author data:", error);
+    //   }
+    // };
+
+    // Call fetchAuthorData if selectBook.authorId is defined
+    // if (selectBook.authorId) {
+    //   fetchAuthorData();
+    // }
+  }, [deleteSuccess, selectBook.authorId]);
 
   return (
     <section>
@@ -72,6 +94,7 @@ export const NovelBookList = () => {
               <div className="text-lg font-bold">
                 <h3 className="">{item.title}</h3>
                 <p className="">{item.price}</p>
+                <p>{item.authorId}</p>
               </div>
               <div className="ml-auto flex">
                 <button

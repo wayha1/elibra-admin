@@ -7,6 +7,7 @@ import { BaciiBook } from "../BacIIBook/BaciiBook";
 import { ComicBook } from "../ComicBook/ComicBook";
 import { PracticeBook } from "../PracticeBook/PracticeBook";
 import { Mathematic } from "../Mathematic/Mathematic";
+import { KhmerBook } from "../KhmerBook/KhmerBook";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -28,8 +29,8 @@ export const Dashboard = () => {
         return <PracticeBook />;
       case "/dashboard/math-book":
         return <Mathematic />;
-      case "/dashboard/math-book":
-        return <Mathematic />;
+      case "/dashboard/khmer-book":
+        return <KhmerBook />;
       default:
         return (
           <div className="text-center text-2xl font-medium">
@@ -65,6 +66,18 @@ export const Dashboard = () => {
               } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
             >
               អ្នកនិពន្ធ
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
+              to="/dashboard/khmer-book"
+              className={`${
+                window.location.pathname === "/dashboard/khmer-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ អក្សរសិល្ប៍
             </Link>
           </li>
           <li className="flex items-center justify-center">

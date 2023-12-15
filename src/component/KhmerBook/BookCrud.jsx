@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
 
-export const NovelCrud = () => {
+export const BookCrud = () => {
   const [books, setBooks] = useState([]);
   const [Booktitle, setBooktitle] = useState("");
   const [Bookdesc, setBookdesc] = useState("");
@@ -17,7 +17,7 @@ export const NovelCrud = () => {
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const value = collection(db, "Books", "All_Genre", "Novel");
+  const value = collection(db, "Books", "All_Genre", "KhmerBook");
   const authorCollection = collection(db, "Author");
 
   const fetchAuthors = async () => {
@@ -124,7 +124,7 @@ export const NovelCrud = () => {
       <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
         <option value="">Select an Author</option>
         {authorList.map((author) => (
-          <option key={author.id} value={author.authName}>
+          <option key={author.id} value={author.id}>
             {author.authName}
           </option>
         ))}
