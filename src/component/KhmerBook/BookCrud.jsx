@@ -124,7 +124,7 @@ export const BookCrud = () => {
       <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
         <option value="">Select an Author</option>
         {authorList.map((author) => (
-          <option key={author.id} value={author.id}>
+          <option key={author.id} value={author.authName}>
             {author.authName}
           </option>
         ))}

@@ -56,32 +56,11 @@ export const NovelBookList = () => {
 
         const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
         setNovelBook(bookData);
-        console.log(NovelBook);
       } catch (error) {
         console.error("Error fetching popular section data:", error);
       }
     };
     getBacData();
-
-    // // Moved fetchAuthorData outside of getBacData
-    // const fetchAuthorData = async () => {
-    //   try {
-    //     const authorId = selectBook.authorId;
-    //     const authorDoc = doc(db, "Authors", authorId);
-    //     const authorSnapshot = await getDocs(authorDoc);
-    //     const author = authorSnapshot.data();
-    //     setAuthorData(author);
-    //     console.log(authorData);
-    //     console.log(authorId)
-    //   } catch (error) {
-    //     console.error("Error fetching author data:", error);
-    //   }
-    // };
-
-    // Call fetchAuthorData if selectBook.authorId is defined
-    // if (selectBook.authorId) {
-    //   fetchAuthorData();
-    // }
   }, [deleteSuccess, selectBook.authorId]);
 
   return (
