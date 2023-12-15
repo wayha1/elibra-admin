@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, imgDB } from "../../firebase";
+import { v4 as uuidv4 } from "uuid";
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
 const KhmerBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
-  // const [authorData, setAuthorData] = useState({});
   const [loading, setLoading] = useState(false);
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
+  const [bookImage, setBookImage] = useState(null);
+  const [bookDetailModalOpen, setBookDetailModalOpen] = useState(false);
+  const [hoveredBook, setHoveredBook] = useState(null);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [updatedBook, setUpdatedBook] = useState({
+    title: "",
+    price: "",
+    authorId: "",
+    img: "",
+  });
   const handleDelete = (bookId) => {
     if (loading) return;
     setSelectBook({ bookId });
@@ -30,6 +42,43 @@ const KhmerBookList = () => {
       setLoading(false);
       setOpenDeleteModal(false);
     }
+  };
+  const handleUpdate = (book) => {
+    setUpdatedBook(book);
+    setUpdateModalOpen(true);
+  };
+
+  const confirmUpdate = async () => {
+    setLoading(true);
+    try {
+      const bookRef = doc(db, "Books", "All_Genre", "Novel", updatedBook.id);
+      const newData = {
+        title: updatedBook.title,
+        price: updatedBook.price,
+        authorId: updatedBook.authorId,
+        img: updatedBook.img,
+      };
+
+      if (bookImage) {
+        const newImgRef = ref(imgDB, `WebsiteProject/Books/${bookImage.name + uuidv4()}`);
+        await uploadBytes(newImgRef, bookImage);
+        const newImgUrl = await getDownloadURL(newImgRef);
+        newData.img = newImgUrl;
+      }
+
+      await updateDoc(bookRef, newData);
+      setUpdateSuccess(true); // Set updateSuccess to true on successful update
+    } catch (error) {
+      console.error("Error updating document or image:", error.message);
+    } finally {
+      setLoading(false);
+      setUpdateModalOpen(false);
+    }
+  };
+
+  const handleBookDetail = (bookId) => {
+    setUpdatedBook(bookId);
+    setBookDetailModalOpen(true);
   };
 
   useEffect(() => {
@@ -62,7 +111,6 @@ const KhmerBookList = () => {
     };
     getBacData();
   }, [deleteSuccess, selectBook.authorId]);
-
   return (
     <section>
       <div className="container w-auto">
@@ -82,14 +130,22 @@ const KhmerBookList = () => {
                 >
                   Delete
                 </button>
-                <button className="bg-green-500 text-white p-2 active:bg-blue-500 rounded" onClick={() => {}}>
+                <button
+                  className="bg-green-500 text-white p-2 active:bg-blue-500 rounded"
+                  onClick={() => handleUpdate(item)}
+                >
                   Update
+                </button>
+                <button
+                  className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
+                  onClick={() => handleBookDetail(item.id)}
+                >
+                  Author Detail
                 </button>
               </div>
             </div>
           </div>
         ))}
-
         {openDeleteModal && (
           <div className="fixed inset-0 flex items-center justify-center">
             <div
