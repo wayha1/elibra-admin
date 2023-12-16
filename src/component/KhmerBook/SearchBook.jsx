@@ -1,28 +1,41 @@
-import React, { useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
 
 const SearchBook = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookData, setBookData] = useState(null);
 
-  const handleSearch = async () => {
-    try {
-      const booksCollection = collection(db, "Books", "All_Genre", "KhmerBook");
-      const q = query(booksCollection, where("title", "==", searchQuery));
+  useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        const booksCollection = collection(db, "Books", "All_Genre", "KhmerBook");
+        const lowerCaseQuery = searchQuery.toLowerCase();
+        const q = query(
+          booksCollection,
+          where("title", ">=", lowerCaseQuery),
+          where("title", "<=", lowerCaseQuery + "\uf8ff"),
+          orderBy("title")
+        );
 
-      const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.docs.length === 1) {
-        const book = querySnapshot.docs[0].data();
-        setBookData(book);
-      } else {
-        // Reset bookData if no or multiple books found
-        setBookData(null);
+        if (querySnapshot.docs.length === 1) {
+          const book = querySnapshot.docs[0].data();
+          setBookData(book);
+        } else {
+          setBookData(null);
+        }
+      } catch (error) {
+        console.error("Error searching for book:", error.message);
       }
-    } catch (error) {
-      console.error("Error searching for book:", error.message);
-    }
+    };
+    handleSearch();
+  }, [searchQuery]);
+
+  const handleClear = () => {
+    setSearchQuery("");
+    setBookData(null);
   };
 
   return (
@@ -35,8 +48,9 @@ const SearchBook = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="ml-2 bg-blue-500 text-white p-2 rounded" onClick={handleSearch}>
-          Search
+        <button className="ml-2 bg-blue-500 text-white p-2 rounded">Search</button>
+        <button className="ml-2 bg-red-500 text-white p-2 rounded" onClick={handleClear}>
+          Clear
         </button>
       </div>
 
@@ -47,7 +61,6 @@ const SearchBook = () => {
             <p className="text-lg font-bold">{bookData.title}</p>
             <p className="text-sm">{bookData.price}</p>
             <p className="text-sm">{bookData.date}</p>
-            {/* Add other fields as needed */}
           </div>
         </div>
       ) : (

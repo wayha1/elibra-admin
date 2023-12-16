@@ -16,8 +16,9 @@ export const BookCrud = () => {
   const [BookCover, setBookCover] = useState(null);
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  const value = collection(db, "Books", "All_Genre", "KhmerBook");
+  const value = collection(db, "Books", "All_Genre", "BacII");
   const authorCollection = collection(db, "Author");
 
   const fetchAuthors = async () => {
@@ -44,26 +45,23 @@ export const BookCrud = () => {
       // Upload image
       await uploadBytes(imgRef, BookCover);
       const imageUrl = await getDownloadURL(imgRef);
-
       // Upload PDF
       await uploadBytes(pdfRef, BookPdf);
       const pdfUrl = await getDownloadURL(pdfRef);
-
       // Add document to Firestore
       await addDoc(value, {
         title: Booktitle,
         decs: Bookdesc,
         price: BookPrice,
         date: BookDate,
-        stock: Stock, // Add stock field
+        stock: Stock,
         img: imageUrl,
         BookPdf: pdfUrl,
-        authorId: selectedAuthor, // Assuming you have an authorId field in your book document
+        authorId: selectedAuthor,
       });
 
       alert("Book data & Image Upload");
 
-      // Reset form fields after successful upload
       setBooktitle("");
       setBookdesc("");
       setBookPrice("");
@@ -75,27 +73,29 @@ export const BookCrud = () => {
       // Fetch updated books
       const booksCollection = await getDocs(value);
       setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setShowSuccessPopup(true);
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {}, [showSuccessPopup]);
 
-  const handleDeleteBook = async (bookId) => {
-    try {
-      await deleteDoc(doc(value, bookId));
-      alert("Book deleted successfully");
+  //   const handleDeleteBook = async (bookId) => {
+  //     try {
+  //       await deleteDoc(doc(value, bookId));
+  //       alert("Book deleted successfully");
 
-      // Fetch updated books
-      const booksCollection = await getDocs(value);
-      setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    } catch (error) {
-      console.error("Error deleting book:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //       // Fetch updated books
+  //       const booksCollection = await getDocs(value);
+  //       setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  //     } catch (error) {
+  //       console.error("Error deleting book:", error.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
   return (
     <div className="container flex flex-col m-2 space-y-5">
@@ -189,6 +189,24 @@ export const BookCrud = () => {
       >
         {loading ? "Uploading..." : "Upload"}
       </button>
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <div className="absolute inset-0 flex items-center justify-center ">
+              <div className="bg-white p-4 rounded shadow-lg">
+                <p className="mb-4">Book added successfully!</p>
+                <button
+                  className="bg-gray-500 text-white p-2 rounded"
+                  onClick={() => setShowSuccessPopup(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
