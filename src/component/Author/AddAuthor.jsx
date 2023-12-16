@@ -42,6 +42,10 @@ export const AddAuthor = () => {
       setLoading(false);
     }
   };
+  const handleRemoveImage = () => {
+    setAuthImage(null);
+    setImageUrl("");
+  };
   useEffect(() => {}, [loading]);
 
   return (
@@ -86,12 +90,19 @@ export const AddAuthor = () => {
           accept="image/*"
           className="hidden"
         />
-        {authImage && <div className="absolute top-0 right-0 mt-2 mr-10 text-sky-500">Image uploaded!</div>}
+        {authImage && (
+          <div className="top-0 right-0 mt-2 mr-10 text-sky-500">
+            <span className="mr-2">Image uploaded!</span>
+            <button className="text-white p-2 bg-red-500 rounded-lg" onClick={handleRemoveImage}>
+              Remove
+            </button>
+          </div>
+        )}
       </div>
+
       {loading ? (
         <LoadingProcess />
       ) : (
-        
         <button
           onClick={handleCreate}
           className={`${

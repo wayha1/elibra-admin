@@ -11,7 +11,7 @@ const KhmerBookList = () => {
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
   const [loading, setLoading] = useState(false);
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [bookImage, setBookImage] = useState(null);
   const [bookDetailModalOpen, setBookDetailModalOpen] = useState(false);
@@ -26,18 +26,24 @@ const KhmerBookList = () => {
     authorId: "",
     img: "",
   });
-  const handleDelete = (bookId) => {
+
+  const handleDelete = (book) => {
     if (loading) return;
-    setSelectBook({ bookId });
+    setSelectBook({ book });
     setOpenDeleteModal(true);
+    console.log(book);
   };
 
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      const bookRef = doc(db, "Books", "All_Genre", "Novel", selectBook.bookId);
+      if (!selectBook) {
+        throw new Error("Selected book is undefined");
+      }
+      const bookRef = doc(db, "Books", "All_Genre", "KhmerBook", selectBook.book);
       await deleteDoc(bookRef);
-      setDeleteSuccess(true);
+
+      setShowSuccessPopup(true);
       alert("Delete Successful!!");
     } catch (error) {
       console.error("Error deleting document or image:", error.message);
@@ -46,6 +52,7 @@ const KhmerBookList = () => {
       setOpenDeleteModal(false);
     }
   };
+
   const handleUpdate = (book) => {
     setUpdatedBook(book);
     setUpdateModalOpen(true);
@@ -54,7 +61,7 @@ const KhmerBookList = () => {
   const confirmUpdate = async () => {
     setLoading(true);
     try {
-      const bookRef = doc(db, "Books", "All_Genre", "Novel", updatedBook.id);
+      const bookRef = doc(db, "Books", "All_Genre", "KhmerBook", updatedBook.id);
       const newData = {
         title: updatedBook.title,
         price: updatedBook.price,
@@ -120,7 +127,7 @@ const KhmerBookList = () => {
     };
 
     getBacData();
-  }, [deleteSuccess, selectBook.authorId, updateSuccess]);
+  }, [showSuccessPopup, selectBook.authorId, updateSuccess]);
 
   return (
     <section>
@@ -129,9 +136,10 @@ const KhmerBookList = () => {
         {NovelBook.map((item, index) => (
           <div key={index} className="flex items-center mb-4 p-4 bg-white rounded-lg ">
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
-            <div className="flex flex-col ml-4 w-full text-lg font-bold space-y-2">
+            <div className="flex flex-col ml-4 w-full text-lg font-bold space-y-4">
               <h1 className="">{item.title}</h1>
               <h3 className="">{item.price}</h3>
+              <h3 className="">ចំនួនស្ដុប៖ {item.stock} ក្បាល</h3>
               <h3 className="whitespace-nowrap">{item.date}</h3>
               <span>{item.authorId}</span>
             </div>
@@ -264,18 +272,19 @@ const KhmerBookList = () => {
         {loading && updateModalOpen && <LoadingProcess />}
 
         {/* Update Success Modal */}
-        {updateSuccess && (
-          <div className="fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black opacity-50"></div>
-            <div className="absolute inset-0 flex items-center justify-center ">
-              <div className="bg-white p-4 rounded shadow-lg">
-                <p className="mb-4">Update successful!</p>
-                <button
-                  className="bg-gray-500 text-white p-2 rounded"
-                  onClick={() => setUpdateSuccess(false)}
-                >
-                  Close
-                </button>
+        {showSuccessPopup && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-4 rounded shadow-lg">
+              <div className="absolute inset-0 flex items-center justify-center ">
+                <div className="bg-white p-4 rounded shadow-lg">
+                  <p className="mb-4">Update successful!</p>
+                  <button
+                    className="bg-gray-500 text-white p-2 rounded"
+                    onClick={() => setShowSuccessPopup(false)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>

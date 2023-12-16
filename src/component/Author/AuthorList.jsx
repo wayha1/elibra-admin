@@ -63,22 +63,24 @@ export const AuthorList = () => {
     try {
       const authorRef = doc(db, "Author", updatedAuthor.id);
       const imgRef = ref(imgDB, updatedAuthor.imgAuth);
+
+      // Initialize newData with the existing values
       const newData = {
         authName: updatedAuthor.authName,
         Gender: updatedAuthor.Gender,
         Decs: updatedAuthor.Decs,
-        authDOB: updatedAuthor.authDOB,
+        authDOB: updatedAuthor.authDOB, 
+        imgAuth: updatedAuthor.imgAuth, 
       };
-
       if (authImage) {
         const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
         await uploadBytes(newImgRef, authImage);
         const newImgUrl = await getDownloadURL(newImgRef);
         newData.imgAuth = newImgUrl;
       }
-
-      await updateDoc(authorRef, newData);
-      setUpdateSuccess(true); // Set updateSuccess to true on successful update
+      const filteredData = Object.fromEntries(Object.entries(newData).filter(([_, v]) => v !== undefined));
+      await updateDoc(authorRef, filteredData);
+      setUpdateSuccess(true);
     } catch (error) {
       console.error("Error updating document or image:", error.message);
     } finally {
