@@ -50,6 +50,7 @@ export const AddAuthor = () => {
 
   return (
     <div className="container flex flex-col m-2 space-y-5">
+      <h1 className="container text-2xl font-bold font-style hover:text-cyan-700"> + បញ្ចូលទិន្នន័យអ្នកនិពន្ធ</h1>
       <input
         value={authName}
         onChange={(e) => setAuthName(e.target.value)}

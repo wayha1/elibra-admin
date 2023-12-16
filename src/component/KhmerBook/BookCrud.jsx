@@ -103,50 +103,54 @@ export const BookCrud = () => {
         value={Booktitle}
         onChange={(e) => setBooktitle(e.target.value)}
         placeholder="ចំណងជើងសៀវភៅ"
-        className="p-2 "
+        className="p-2 rounded-lg "
       />
       <input
         value={Bookdesc}
         onChange={(e) => setBookdesc(e.target.value)}
         placeholder="ព័ត៌មានរបស់សៀវភៅ"
-        className="p-2 "
+        className="p-2 rounded-lg  border rounded-md focus:outline-none focus:border-blue-500"
       />
       <input
         value={BookPrice}
         onChange={(e) => setBookPrice(e.target.value)}
-        className="p-2"
+        className="p-2 rounded-lg"
         placeholder="តម្លៃ សៀវភៅ"
       />
       <input
         value={BookDate}
         onChange={(e) => setBookDate(e.target.value)}
-        className="p-2"
+        className="p-2 rounded-lg"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
       <input
         type="number" // Set the input type to number
         value={Stock}
-        onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))} // Ensure stock is non-negative and numeric
-        className="p-2"
+        onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))}
+        className="p-2 rounded-lg"
         placeholder="ចំនួនស្តុក"
       />
-      <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
-        <option value="">Select an Author</option>
+      <select
+        value={selectedAuthor}
+        onChange={(e) => setSelectedAuthor(e.target.value)}
+        className="p-2 rounded-lg"
+      >
+        <option value="">Select Author</option>
         {authorList.map((author) => (
           <option key={author.id} value={author.authName}>
             {author.authName}
           </option>
         ))}
       </select>
-      <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
+      <label className="relative overflow-hidden inline-block bg-white w-fit px-4 py-2 rounded-xl">
         <input
           type="file"
           onChange={(e) => setBookCover(e.target.files[0])}
           accept="image/*"
           className="font-[100px] absolute l-0 t-0 opacity-0"
         />
-        <span className="flex text-3xl">
-          <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
+        <span className="flex text-xl font-bold font-style">
+          <FcAddImage className="mt-1 mr-2" /> Upload Cover Book
         </span>
       </label>
       {BookCover && (
@@ -157,14 +161,14 @@ export const BookCrud = () => {
           </button>
         </div>
       )}
-      <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
+      <label className="relative overflow-hidden inline-block bg-white w-fit px-4 py-2 rounded-xl">
         <input
           type="file"
           onChange={(e) => setBookPdf(e.target.files[0])}
           accept=".pdf"
-          className="font-[100px] absolute l-0 t-0 opacity-0"
+          className="font-[100px] absolute l-0 t-0 opacity-0 "
         />
-        <span className="flex text-3xl">
+        <span className="flex text-xl font-bold font-style">
           <FcAddImage className="mt-1 mr-2" /> Upload Book PDF
         </span>
       </label>
@@ -176,7 +180,10 @@ export const BookCrud = () => {
           </button>
         </div>
       )}
-      <button onClick={handleAddBook} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
+      <button
+        onClick={handleAddBook}
+        className="bg-blue-500 w-32 rounded-xl p-2 text-white text-lg font-custom"
+      >
         {loading ? "Uploading..." : "Upload"}
       </button>
     </div>
