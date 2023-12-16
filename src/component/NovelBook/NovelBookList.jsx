@@ -66,6 +66,7 @@ export const NovelBookList = () => {
   return (
     <section>
       <div className="container w-auto">
+        
         {NovelBook.map((item, index) => (
           <div key={index} className="flex items-center mb-4 p-4 bg-white rounded-lg ">
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-50" />

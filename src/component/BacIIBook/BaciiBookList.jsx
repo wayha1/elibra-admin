@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
-import SearchBook from "./SearchBook";
+// import SearchBook from "./SearchBook";
 
-const KhmerBookList = () => {
+export const BaciiBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
@@ -19,8 +19,6 @@ const KhmerBookList = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updateSuccessPopup, setUpdateSuccessPopup] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearchActive, setIsSearchActive] = useState(false); // New state variable
   const [updatedBook, setUpdatedBook] = useState({
     title: "",
     price: "",
@@ -29,12 +27,6 @@ const KhmerBookList = () => {
     authorId: "",
     img: "",
   });
-  const handleSearch = (results) => {
-    setSearchResults(results);
-    setHoveredBook(null);
-    setIsSearchActive(results.length > 0); // Set isSearchActive based on whether there are search results
-  };
-
   const handleBookDetail = (bookId) => {
     const selectedBook = NovelBook.find((book) => book.id === bookId);
     setUpdatedBook(selectedBook);
@@ -54,7 +46,7 @@ const KhmerBookList = () => {
       if (!selectBook) {
         throw new Error("Selected book is undefined");
       }
-      const bookRef = doc(db, "Books", "All_Genre", "KhmerBook", selectBook.book);
+      const bookRef = doc(db, "Books", "All_Genre", "BacII", selectBook.book);
       await deleteDoc(bookRef);
 
       setShowSuccessPopup(true);
@@ -75,7 +67,7 @@ const KhmerBookList = () => {
   const confirmUpdate = async () => {
     setLoading(true);
     try {
-      const bookRef = doc(db, "Books", "All_Genre", "KhmerBook", updatedBook.id);
+      const bookRef = doc(db, "Books", "All_Genre", "BacII", updatedBook.id);
       const newData = {
         title: updatedBook.title,
         price: updatedBook.price,
@@ -110,7 +102,7 @@ const KhmerBookList = () => {
         setBacData(data);
         const bookDataPromises = data.map(async (elem) => {
           try {
-            const BookPop = collection(db, `Books/${elem.id}/KhmerBook`);
+            const BookPop = collection(db, `Books/${elem.id}/BacII`);
             const DataBooks = await getDocs(BookPop);
             const BookData = DataBooks.docs.map((bookDoc) => ({
               ...bookDoc.data(),
@@ -148,22 +140,22 @@ const KhmerBookList = () => {
   return (
     <section>
       <div className="container w-auto">
-        <SearchBook onSearch={handleSearch} />
-        {(isSearchActive ? searchResults : NovelBook).map((item, index) => (
+        {/* <SearchBook /> */}
+        {NovelBook.map((item, index) => (
           <div
-            key={item.id}
+            key={item.index}
             className={`flex w-full items-center mb-2 p-4 rounded-lg ${
               hoveredBook === item.id ? "bg-blue-200" : "bg-white"
-            } ${isSearchActive ? "hidden" : ""}`}
+            }`}
             onMouseEnter={() => setHoveredBook(item.id)}
             onMouseLeave={() => setHoveredBook(null)}
           >
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
             <div className="flex w-full justify-between items-center">
-              <div className="flex flex-col ml-4 text-lg font-bold space-y-4">
-                <h1>{item.title}</h1>
-                <h3>{item.price}</h3>
-                <h3>{item.stock} ក្បាល</h3>
+              <div className="flex flex-col ml-4  text-lg font-bold space-y-4">
+                <h1 className="">{item.title}</h1>
+                <h3 className="">{item.price}</h3>
+                <h3 className="">{item.stock} ក្បាល</h3>
                 <h3 className="whitespace-nowrap">{item.date}</h3>
                 <span>{item.authorId}</span>
               </div>
@@ -373,5 +365,3 @@ const KhmerBookList = () => {
     </section>
   );
 };
-
-export default KhmerBookList;
