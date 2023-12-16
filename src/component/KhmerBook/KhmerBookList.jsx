@@ -18,6 +18,7 @@ const KhmerBookList = () => {
   const [hoveredBook, setHoveredBook] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [updateSuccessPopup, setUpdateSuccessPopup] = useState(false);
   const [updatedBook, setUpdatedBook] = useState({
     title: "",
     price: "",
@@ -26,6 +27,12 @@ const KhmerBookList = () => {
     authorId: "",
     img: "",
   });
+
+  const handleBookDetail = (bookId) => {
+    const selectedBook = NovelBook.find((book) => book.id === bookId);
+    setUpdatedBook(selectedBook);
+    setBookDetailModalOpen(true);
+  };
 
   const handleDelete = (book) => {
     if (loading) return;
@@ -87,12 +94,6 @@ const KhmerBookList = () => {
     }
   };
 
-  const handleBookDetail = (bookId) => {
-    const selectedBook = NovelBook.find((book) => book.id === bookId);
-    setUpdatedBook(selectedBook);
-    setBookDetailModalOpen(true);
-  };
-
   useEffect(() => {
     const getBacData = async () => {
       try {
@@ -116,11 +117,19 @@ const KhmerBookList = () => {
         });
 
         const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
-
-        // Sort the book data alphabetically by title
         bookData.sort((a, b) => a.title.localeCompare(b.title));
-
         setNovelBook(bookData);
+
+        if (updateSuccess) {
+          setUpdateSuccessPopup(true);
+
+          const timeoutId = setTimeout(() => {
+            setUpdateSuccessPopup(false);
+            setUpdateSuccess(false);
+          }, 3000);
+
+          return () => clearTimeout(timeoutId);
+        }
       } catch (error) {
         console.error("Error fetching popular section data:", error);
       }
@@ -272,7 +281,7 @@ const KhmerBookList = () => {
         {loading && updateModalOpen && <LoadingProcess />}
 
         {/* Update Success Modal */}
-        {showSuccessPopup && (
+        {updateSuccessPopup && (
           <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-4 rounded shadow-lg">
               <div className="absolute inset-0 flex items-center justify-center ">
@@ -280,7 +289,7 @@ const KhmerBookList = () => {
                   <p className="mb-4">Update successful!</p>
                   <button
                     className="bg-gray-500 text-white p-2 rounded"
-                    onClick={() => setShowSuccessPopup(false)}
+                    onClick={() => setUpdateSuccessPopup(false)}
                   >
                     Close
                   </button>

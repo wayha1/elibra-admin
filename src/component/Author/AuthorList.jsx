@@ -63,14 +63,12 @@ export const AuthorList = () => {
     try {
       const authorRef = doc(db, "Author", updatedAuthor.id);
       const imgRef = ref(imgDB, updatedAuthor.imgAuth);
-
-      // Initialize newData with the existing values
       const newData = {
         authName: updatedAuthor.authName,
         Gender: updatedAuthor.Gender,
         Decs: updatedAuthor.Decs,
-        authDOB: updatedAuthor.authDOB, 
-        imgAuth: updatedAuthor.imgAuth, 
+        authDOB: updatedAuthor.authDOB,
+        imgAuth: updatedAuthor.imgAuth,
       };
       if (authImage) {
         const newImgRef = ref(imgDB, `WebsiteProject/AboutUs/${authImage.name + uuidv4()}`);
