@@ -113,7 +113,6 @@ export const AuthorList = () => {
   }, [deleteSuccess, updateSuccess]);
 
   const handleSort = (gender) => {
-    // Set the current list based on the selected gender
     switch (gender) {
       case "ប្រុស":
         setAuthorList(maleAuthorList);

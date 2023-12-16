@@ -99,6 +99,9 @@ export const BookCrud = () => {
 
   return (
     <div className="container flex flex-col m-2 space-y-5">
+      <h1 className="container text-2xl font-bold font-style hover:text-cyan-700">
+        {"+ បញ្ចូលទិន្នន័យសៀវភៅ"}
+      </h1>
       <input
         value={Booktitle}
         onChange={(e) => setBooktitle(e.target.value)}

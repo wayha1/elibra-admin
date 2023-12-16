@@ -143,7 +143,14 @@ const KhmerBookList = () => {
       <div className="container w-auto">
         <SearchBook />
         {NovelBook.map((item, index) => (
-          <div key={index} className="flex items-center mb-4 px-3 py-2 bg-white rounded-lg ">
+          <div
+            key={item.index}
+            className={`flex w-full items-center mb-2 p-4 rounded-lg ${
+              hoveredBook === item.id ? "bg-blue-200" : "bg-white"
+            }`}
+            onMouseEnter={() => setHoveredBook(item.id)}
+            onMouseLeave={() => setHoveredBook(null)}
+          >
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
             <div className="flex w-full justify-between items-center">
               <div className="flex flex-col ml-4  text-lg font-bold space-y-4">
