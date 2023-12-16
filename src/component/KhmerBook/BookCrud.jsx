@@ -4,13 +4,13 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
-
 export const BookCrud = () => {
   const [books, setBooks] = useState([]);
   const [Booktitle, setBooktitle] = useState("");
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
+  const [Stock, setStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [BookCover, setBookCover] = useState(null);
@@ -55,6 +55,7 @@ export const BookCrud = () => {
         decs: Bookdesc,
         price: BookPrice,
         date: BookDate,
+        stock: Stock, // Add stock field
         img: imageUrl,
         BookPdf: pdfUrl,
         authorId: selectedAuthor, // Assuming you have an authorId field in your book document
@@ -67,6 +68,7 @@ export const BookCrud = () => {
       setBookdesc("");
       setBookPrice("");
       setBookDate("");
+      setStock(""); // Reset stock field
       setBookCover(null);
       setBookPdf(null);
 
@@ -121,6 +123,13 @@ export const BookCrud = () => {
         className="p-2"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
+      <input
+        type="number" // Set the input type to number
+        value={Stock}
+        onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))} // Ensure stock is non-negative and numeric
+        className="p-2"
+        placeholder="ចំនួនស្តុក"
+      />
       <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
         <option value="">Select an Author</option>
         {authorList.map((author) => (
@@ -134,12 +143,20 @@ export const BookCrud = () => {
           type="file"
           onChange={(e) => setBookCover(e.target.files[0])}
           accept="image/*"
-          className="font-[100px] absolute l-0 t-0 opacity-0 "
+          className="font-[100px] absolute l-0 t-0 opacity-0"
         />
-        <span className="flex text-3xl ">
+        <span className="flex text-3xl">
           <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
         </span>
       </label>
+      {BookCover && (
+        <div className="flex items-center mt-2">
+          <span className="text-green-500 mr-2">Image selected: {BookCover.name}</span>
+          <button className="text-white p-2 bg-red-500 rounded-lg" onClick={() => setBookCover(null)}>
+            Remove
+          </button>
+        </div>
+      )}
       <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
         <input
           type="file"
@@ -147,10 +164,18 @@ export const BookCrud = () => {
           accept=".pdf"
           className="font-[100px] absolute l-0 t-0 opacity-0"
         />
-        <span className="flex text-3xl ">
+        <span className="flex text-3xl">
           <FcAddImage className="mt-1 mr-2" /> Upload Book PDF
         </span>
       </label>
+      {BookPdf && (
+        <div className="flex items-center mt-2">
+          <span className="text-green-500 mr-2">PDF selected: {BookPdf.name}</span>
+          <button className="text-white p-2 bg-red-500 rounded-lg" onClick={() => setBookPdf(null)}>
+            Remove
+          </button>
+        </div>
+      )}
       <button onClick={handleAddBook} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
         {loading ? "Uploading..." : "Upload"}
       </button>

@@ -7,7 +7,6 @@ export const KhmerBook = () => {
   const [book, setBook] = useState([
     { id: 1, name: "All Books" },
     { id: 2, name: "Add Book" },
-    { id: 3, name: "Search Book" },
   ]);
   const [activeComponent, setActiveComponent] = useState("All Books");
   const handleComponentChange = (component) => {
@@ -19,8 +18,6 @@ export const KhmerBook = () => {
         return <KhmerBookList />;
       case "Add Book":
         return <BookCrud />;
-      case "Search Book":
-        return <SearchBook />;
       default:
         return (
           <div className="text-center text-2xl font-medium ">
@@ -33,7 +30,6 @@ export const KhmerBook = () => {
   return (
     <div className="flex flex-col ">
       {/* Header */}
-
       <ul className="flex items-center justify-center bg-shadow-lg py-3 bg-white ">
         {book.map((books) => (
           <li

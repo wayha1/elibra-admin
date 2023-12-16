@@ -4,7 +4,7 @@ import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
-import SeachAuthor from "../Author/SeachAuthor";
+import SearchBook from "./SearchBook";
 
 const KhmerBookList = () => {
   const [bacData, setBacData] = useState([]);
@@ -109,21 +109,26 @@ const KhmerBookList = () => {
         });
 
         const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
+
+        // Sort the book data alphabetically by title
+        bookData.sort((a, b) => a.title.localeCompare(b.title));
+
         setNovelBook(bookData);
       } catch (error) {
         console.error("Error fetching popular section data:", error);
       }
     };
+
     getBacData();
   }, [deleteSuccess, selectBook.authorId, updateSuccess]);
+
   return (
     <section>
       <div className="container w-auto">
-        <SeachAuthor />
+        <SearchBook />
         {NovelBook.map((item, index) => (
           <div key={index} className="flex items-center mb-4 p-4 bg-white rounded-lg ">
             <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
-
             <div className="flex flex-col ml-4 w-full text-lg font-bold space-y-2">
               <h1 className="">{item.title}</h1>
               <h3 className="">{item.price}</h3>
