@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { AddAuthor } from "./AddAuthor";
 import { AuthorList } from "./AuthorList";
-import { SeachAuthor } from "./SeachAuthor";
-// import { db } from "../../firebase";
-// import { Link, useLocation } from "react-router-dom";
+import SeachAuthor from "./SeachAuthor";
 
 export const Author = () => {
   const [CRUD, setCRUD] = useState([
-    { id: 1, name: "View List" },
+    { id: 1, name: "Author List" },
     { id: 2, name: "Add Author" },
-    { id: 3, name: "Search Author" },
+    // { id: 3, name: "Search Author" },
   ]);
-  const [activeComponent, setActiveComponent] = useState("View List");
+  const [activeComponent, setActiveComponent] = useState("Author List");
 
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };
   const renderContent = () => {
     switch (activeComponent) {
-      case "View List":
+      case "Author List":
         return <AuthorList />;
       case "Add Author":
         return <AddAuthor />;
@@ -34,29 +32,28 @@ export const Author = () => {
   };
 
   return (
-    <div className="flex flex-col w-auto">
+    <div className="flex flex-col">
       {/* Header */}
-      <div className="bg-shadow-lg p-4 bg-neutral-500 ">
-        <ul className="flex items-center justify-center">
-          {CRUD.map((crud) => (
-            <li key={crud.id} className="mr-4">
-              <span
-                className={`${
-                  activeComponent === crud.name
-                    ? "bg-red-500 hover:bg-shadow-xl hover:bg-red-600 rounded-xl text-gray-200"
-                    : "text-neutral-100"
-                } cursor-pointer font-medium text-center text-2xl p-2 bg-blue-700 hover:bg-shadow-xl hover:bg-blue-600 rounded-xl text-gray-200`}
-                onClick={() => handleComponentChange(crud.name)}
-              >
-                {crud.name}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
+      <ul className="flex items-center justify-center bg-shadow-lg py-3 bg-white ">
+        {CRUD.map((crud) => (
+          <li key={crud.id} className="hover:scale-110 transition duration-150 ease-in-out whitespace-nowrap">
+            <span
+              className={`${
+                activeComponent === crud.name
+                  ? " hover:bg-shadow-xl text-gray-700"
+                  : "text-gray-400 hover:underline hover:text-gray-700 hover:bg-gray-100 hover:rounded-lg hover:bg-shadow-xl"
+              } cursor-pointer font-navbar font-bold text-center text-2xl p-2 hover:bg-shadow-xl text-gray-200`}
+              onClick={() => handleComponentChange(crud.name)}
+            >
+              {crud.name}
+            </span>
+          </li>
+        ))}
+      </ul>
       {/* Content Section */}
-      <div className="flex-grow bg-neutral-200 p-4">{renderContent()}</div>
+      <div className="flex-grow bg-neutral-200 px-4 py-3 transition duration-150 ease-in-out">
+        {renderContent()}
+      </div>
     </div>
   );
 };
