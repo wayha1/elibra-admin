@@ -4,21 +4,23 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess"; // Import the LoadingProcess component
+
 export const BookCrud = () => {
   const [books, setBooks] = useState([]);
   const [Booktitle, setBooktitle] = useState("");
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
+  const [category, setCategory] = useState("");
   const [Stock, setStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [BookCover, setBookCover] = useState(null);
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-  const value = collection(db, "Books", "All_Genre", "BacII");
+  const value = collection(db, "Books", "All_Genre", "bacII");
   const authorCollection = collection(db, "Author");
 
   const fetchAuthors = async () => {
@@ -45,10 +47,10 @@ export const BookCrud = () => {
       // Upload image
       await uploadBytes(imgRef, BookCover);
       const imageUrl = await getDownloadURL(imgRef);
+
       // Upload PDF
       await uploadBytes(pdfRef, BookPdf);
       const pdfUrl = await getDownloadURL(pdfRef);
-      // Add document to Firestore
       await addDoc(value, {
         title: Booktitle,
         decs: Bookdesc,
@@ -58,44 +60,30 @@ export const BookCrud = () => {
         img: imageUrl,
         BookPdf: pdfUrl,
         authorId: selectedAuthor,
+        category: category, // Add category field
       });
 
       alert("Book data & Image Upload");
 
+      // Reset form fields after successful upload
       setBooktitle("");
       setBookdesc("");
       setBookPrice("");
       setBookDate("");
-      setStock(""); // Reset stock field
+      setStock(0);
+      setCategory(""); // Reset category field
       setBookCover(null);
       setBookPdf(null);
 
       // Fetch updated books
       const booksCollection = await getDocs(value);
       setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-      setShowSuccessPopup(true);
     } catch (error) {
       console.error("Error uploading image or adding document:", error.message);
     } finally {
       setLoading(false);
     }
   };
-  useEffect(() => {}, [showSuccessPopup]);
-
-  //   const handleDeleteBook = async (bookId) => {
-  //     try {
-  //       await deleteDoc(doc(value, bookId));
-  //       alert("Book deleted successfully");
-
-  //       // Fetch updated books
-  //       const booksCollection = await getDocs(value);
-  //       setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-  //     } catch (error) {
-  //       console.error("Error deleting book:", error.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
 
   return (
     <div className="container flex flex-col m-2 space-y-5">
@@ -132,6 +120,12 @@ export const BookCrud = () => {
         onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))}
         className="p-2 rounded-lg"
         placeholder="ចំនួនស្តុក"
+      />
+      <input
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        placeholder="ប្រភេទសៀវភៅ"
+        className="p-2 rounded-lg"
       />
       <select
         value={selectedAuthor}
@@ -183,30 +177,13 @@ export const BookCrud = () => {
           </button>
         </div>
       )}
+      {loading && <LoadingProcess />}
       <button
         onClick={handleAddBook}
         className="bg-blue-500 w-32 rounded-xl p-2 text-white text-lg font-custom"
       >
         {loading ? "Uploading..." : "Upload"}
       </button>
-      {/* Success Popup */}
-      {showSuccessPopup && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded shadow-lg">
-            <div className="absolute inset-0 flex items-center justify-center ">
-              <div className="bg-white p-4 rounded shadow-lg">
-                <p className="mb-4">Book added successfully!</p>
-                <button
-                  className="bg-gray-500 text-white p-2 rounded"
-                  onClick={() => setShowSuccessPopup(false)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

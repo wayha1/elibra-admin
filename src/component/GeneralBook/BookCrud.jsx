@@ -20,7 +20,7 @@ export const BookCrud = () => {
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const value = collection(db, "Books", "All_Genre", "KhmerBook");
+  const value = collection(db, "Books", "All_Genre", "GeneralBook");
   const authorCollection = collection(db, "Author");
 
   const fetchAuthors = async () => {

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import KhmerBookList from "./KhmerBookList";
-import { BookCrud } from "./bookCrud";
+import { BookCrud } from "./BookCrud";
+import { GeneralBookList } from "./GeneralBookList";
 
-export const KhmerBook = () => {
+export const Generalbook = () => {
   const [book, setBook] = useState([
-    { id: 1, name: "View Book" },
+    { id: 1, name: "View-Book" },
     { id: 2, name: "Add Book" },
   ]);
-  const [activeComponent, setActiveComponent] = useState("View Book");
+  const [activeComponent, setActiveComponent] = useState("View-Book");
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };
   const renderContent = () => {
     switch (activeComponent) {
-      case "View Book":
-        return <KhmerBookList />;
+      case "View-Book":
+        return <GeneralBookList />;
       case "Add Book":
         return <BookCrud />;
       default:

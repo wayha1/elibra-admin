@@ -8,6 +8,7 @@ import { ComicBook } from "../ComicBook/ComicBook";
 import { PracticeBook } from "../PracticeBook/PracticeBook";
 import { Mathematic } from "../Mathematic/Mathematic";
 import { KhmerBook } from "../KhmerBook/KhmerBook";
+import { Generalbook } from "../GeneralBook/Generalbook";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -17,8 +18,9 @@ export const Dashboard = () => {
       case "/dashboard/management":
         return <Management />;
       case "/dashboard/author":
-        // navigate("/dashboard/author/list");
         return <Author />;
+      case "/dashboard/general-book":
+        return <Generalbook />;
       case "/dashboard/bacii-book":
         return <BaciiBook />;
       case "/dashboard/novel-book":
@@ -58,6 +60,7 @@ export const Dashboard = () => {
               Management
             </Link>
           </li>
+
           <li className="flex items-center justify-center">
             <Link
               to="/dashboard/author"
@@ -66,6 +69,18 @@ export const Dashboard = () => {
               } w-full h-[70px] border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
             >
               អ្នកនិពន្ធ
+            </Link>
+          </li>
+          <li className="flex items-center justify-center">
+            <Link
+              to="/dashboard/general-book"
+              className={`${
+                window.location.pathname === "/dashboard/general-book"
+                  ? "bg-gray-900 text-white"
+                  : "bg-neutral-100"
+              } w-full h-[70px]  border text-center font-bold text-xl p-3 uppercase cursor-pointer`}
+            >
+              សៀវភៅ ចំណេះទូទៅ
             </Link>
           </li>
           <li className="flex items-center justify-center">

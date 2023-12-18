@@ -4,16 +4,16 @@ import { BookCrud } from "./BookCrud";
 
 export const BaciiBook = () => {
   const [book, setBook] = useState([
-    { id: 1, name: "All Books" },
+    { id: 1, name: "Views-Book" },
     { id: 2, name: "Add Book" },
   ]);
-  const [activeComponent, setActiveComponent] = useState("All Books");
+  const [activeComponent, setActiveComponent] = useState("Views-Book");
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };
   const renderContent = () => {
     switch (activeComponent) {
-      case "All Books":
+      case "Views-Book":
         return <BaciiBookList />;
       case "Add Book":
         return <BookCrud />;

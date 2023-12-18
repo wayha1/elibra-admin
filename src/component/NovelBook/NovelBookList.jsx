@@ -20,7 +20,7 @@ export const NovelBookList = () => {
   const confirmDelete = async () => {
     setLoading(true);
     try {
-      const bookRef = doc(db, "Books", "All_Genre", "Novel", selectBook.bookId);
+      const bookRef = doc(db, "Books", "All_Genre", "NovelBook", selectBook.bookId);
       await deleteDoc(bookRef);
       setDeleteSuccess(true);
       alert("Delete Successful!!");
@@ -41,7 +41,7 @@ export const NovelBookList = () => {
         setBacData(data);
         const bookDataPromises = data.map(async (elem) => {
           try {
-            const BookPop = collection(db, `Books/${elem.id}/Novel`);
+            const BookPop = collection(db, `Books/${elem.id}/NovelBook`);
             const DataBooks = await getDocs(BookPop);
             const BookData = DataBooks.docs.map((bookDoc) => ({
               ...bookDoc.data(),

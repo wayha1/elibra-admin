@@ -4,6 +4,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
+import { LoadingProcess } from "../LoadingProcess/LoadingProcess"; // Import the LoadingProcess component
 
 export const NovelCrud = () => {
   const [books, setBooks] = useState([]);
@@ -11,14 +12,15 @@ export const NovelCrud = () => {
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
-  const [BookStock, setBookStock] = useState(0);
+  const [category, setCategory] = useState("");
+  const [Stock, setStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [BookCover, setBookCover] = useState(null);
   const [BookPdf, setBookPdf] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const value = collection(db, "Books", "All_Genre", "Novel");
+  const value = collection(db, "Books", "All_Genre", "NovelBook");
   const authorCollection = collection(db, "Author");
 
   const fetchAuthors = async () => {
@@ -42,20 +44,23 @@ export const NovelCrud = () => {
     const pdfRef = ref(imgDB, `WebsiteProject/Books/${BookPdf.name + uuidv4()}`);
 
     try {
+      // Upload image
       await uploadBytes(imgRef, BookCover);
       const imageUrl = await getDownloadURL(imgRef);
+
+      // Upload PDF
       await uploadBytes(pdfRef, BookPdf);
       const pdfUrl = await getDownloadURL(pdfRef);
-      // Add document to Firestore
       await addDoc(value, {
         title: Booktitle,
         decs: Bookdesc,
         price: BookPrice,
         date: BookDate,
+        stock: Stock,
         img: imageUrl,
         BookPdf: pdfUrl,
         authorId: selectedAuthor,
-        stock: BookStock, // Add the stock value
+        category: category, // Add category field
       });
 
       alert("Book data & Image Upload");
@@ -65,6 +70,8 @@ export const NovelCrud = () => {
       setBookdesc("");
       setBookPrice("");
       setBookDate("");
+      setStock(0);
+      setCategory(""); // Reset category field
       setBookCover(null);
       setBookPdf(null);
 
@@ -78,93 +85,103 @@ export const NovelCrud = () => {
     }
   };
 
-  const handleDeleteBook = async (bookId) => {
-    try {
-      const bookDoc = doc(value, bookId);
-      const bookData = (await getDocs(bookDoc)).data();
-
-      await deleteDoc(bookDoc);
-      alert("Book deleted successfully");
-
-      // Fetch updated books
-      const booksCollection = await getDocs(value);
-      setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-
-      // Handle stock or other data accordingly (if needed)
-      const stock = bookData.stock;
-      // Perform additional actions based on stock or other data
-    } catch (error) {
-      console.error("Error deleting book:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="container flex flex-col m-2 space-y-5">
+      <h1 className="container text-2xl font-bold font-style hover:text-cyan-700">
+        {"+ បញ្ចូលទិន្នន័យសៀវភៅ"}
+      </h1>
       <input
         value={Booktitle}
         onChange={(e) => setBooktitle(e.target.value)}
         placeholder="ចំណងជើងសៀវភៅ"
-        className="p-2 "
+        className="p-2 rounded-lg "
       />
       <input
         value={Bookdesc}
         onChange={(e) => setBookdesc(e.target.value)}
         placeholder="ព័ត៌មានរបស់សៀវភៅ"
-        className="p-2 "
+        className="p-2 rounded-lg  border rounded-md focus:outline-none focus:border-blue-500"
       />
       <input
         value={BookPrice}
         onChange={(e) => setBookPrice(e.target.value)}
-        className="p-2"
+        className="p-2 rounded-lg"
         placeholder="តម្លៃ សៀវភៅ"
       />
       <input
         value={BookDate}
         onChange={(e) => setBookDate(e.target.value)}
-        className="p-2"
+        className="p-2 rounded-lg"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
       <input
-        type="number"
-        value={BookStock}
+        type="number" // Set the input type to number
+        value={Stock}
         onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))}
-        className="p-2"
-        placeholder="Stock"
+        className="p-2 rounded-lg"
+        placeholder="ចំនួនស្តុក"
       />
-
-      <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
-        <option value="">Select an Author</option>
+      <input
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        placeholder="ប្រភេទសៀវភៅ"
+        className="p-2 rounded-lg"
+      />
+      <select
+        value={selectedAuthor}
+        onChange={(e) => setSelectedAuthor(e.target.value)}
+        className="p-2 rounded-lg"
+      >
+        <option value="">Select Author</option>
         {authorList.map((author) => (
           <option key={author.id} value={author.authName}>
             {author.authName}
           </option>
         ))}
       </select>
-      <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
+      <label className="relative overflow-hidden inline-block bg-white w-fit px-4 py-2 rounded-xl">
         <input
           type="file"
           onChange={(e) => setBookCover(e.target.files[0])}
           accept="image/*"
-          className="font-[100px] absolute l-0 t-0 opacity-0 "
+          className="font-[100px] absolute l-0 t-0 opacity-0"
         />
-        <span className="flex text-3xl ">
-          <FcAddImage className="mt-1 mr-2" /> Upload Image (4 x 6)
+        <span className="flex text-xl font-bold font-style">
+          <FcAddImage className="mt-1 mr-2" /> Upload Cover Book
         </span>
       </label>
-      <label className="relative overflow-hidden inline-block bg-white w-fit px-10 py-4">
+      {BookCover && (
+        <div className="flex items-center mt-2">
+          <span className="text-green-500 mr-2">Image selected: {BookCover.name}</span>
+          <button className="text-white p-2 bg-red-500 rounded-lg" onClick={() => setBookCover(null)}>
+            Remove
+          </button>
+        </div>
+      )}
+      <label className="relative overflow-hidden inline-block bg-white w-fit px-4 py-2 rounded-xl">
         <input
           type="file"
           onChange={(e) => setBookPdf(e.target.files[0])}
           accept=".pdf"
-          className="font-[100px] absolute l-0 t-0 opacity-0"
+          className="font-[100px] absolute l-0 t-0 opacity-0 "
         />
-        <span className="flex text-3xl ">
+        <span className="flex text-xl font-bold font-style">
           <FcAddImage className="mt-1 mr-2" /> Upload Book PDF
         </span>
       </label>
-      <button onClick={handleAddBook} className="bg-blue-500 w-32 rounded-lg p-2 text-white">
+      {BookPdf && (
+        <div className="flex items-center mt-2">
+          <span className="text-green-500 mr-2">PDF selected: {BookPdf.name}</span>
+          <button className="text-white p-2 bg-red-500 rounded-lg" onClick={() => setBookPdf(null)}>
+            Remove
+          </button>
+        </div>
+      )}
+      {loading && <LoadingProcess />}
+      <button
+        onClick={handleAddBook}
+        className="bg-blue-500 w-32 rounded-xl p-2 text-white text-lg font-custom"
+      >
         {loading ? "Uploading..." : "Upload"}
       </button>
     </div>
