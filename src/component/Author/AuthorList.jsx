@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+  setDoc,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
 import { db, imgDB } from "../../firebase";
 import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
 import Modal from "./Modal";
-import SeachAuthor from "./SeachAuthor";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
@@ -18,13 +27,11 @@ export const AuthorList = () => {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [selectedGender, setSelectedGender] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAlphabet, setSelectedAlphabet] = useState("");
   const [fullAuthorList, setFullAuthorList] = useState([]);
   const [maleAuthorList, setMaleAuthorList] = useState([]);
   const [femaleAuthorList, setFemaleAuthorList] = useState([]);
-
-  // State variable for sorting order
-  const [sortOrder, setSortOrder] = useState("asc");
   const [updatedAuthor, setUpdatedAuthor] = useState({
     authName: "",
     Decs: "",
@@ -32,6 +39,53 @@ export const AuthorList = () => {
     authDOB: "",
     imgAuth: "",
   });
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const authorsCollection = collection(db, "Author");
+      let filteredAuthors = [];
+
+      if (searchQuery) {
+        const searchResult = await getDocs(
+          query(
+            authorsCollection,
+            where("authName", ">=", searchQuery.toLowerCase()),
+            where("authName", "<=", searchQuery.toLowerCase() + "\uf8ff"),
+            orderBy("authName")
+          )
+        );
+        filteredAuthors = searchResult.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+      } else {
+        filteredAuthors = fullAuthorList;
+      }
+
+      // Filter by selected alphabet
+      if (selectedAlphabet) {
+        filteredAuthors = filteredAuthors.filter(
+          (author) => author.authName.charAt(0).toLowerCase() === selectedAlphabet.toLowerCase()
+        );
+      }
+
+      setAuthorList(filteredAuthors);
+    } catch (error) {
+      console.error("Error searching for authors:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchButtonClick = () => {
+    handleSearch();
+  };
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setSelectedAlphabet("");
+    setAuthorList(fullAuthorList);
+  };
 
   const handleDelete = async (authorId, imageUrl) => {
     if (loading) return;
@@ -98,19 +152,23 @@ export const AuthorList = () => {
   useEffect(() => {
     const value = collection(db, "Author");
     const getAuthors = async () => {
-      const authVal = await getDocs(value);
-      const authors = authVal.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      authors.sort((a, b) => a.authName.localeCompare(b.authName));
-      setFullAuthorList(authors);
-      setAuthorList(authors);
-      const maleAuthors = authors.filter((author) => author.Gender.toLowerCase() === "ប្រុស");
-      const femaleAuthors = authors.filter((author) => author.Gender.toLowerCase() === "ស្រី");
+      try {
+        const authVal = await getDocs(value);
+        const authors = authVal.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        authors.sort((a, b) => a.authName.localeCompare(b.authName));
+        setFullAuthorList(authors);
+        setAuthorList(authors);
+        const maleAuthors = authors.filter((author) => author.Gender.toLowerCase() === "ប្រុស");
+        const femaleAuthors = authors.filter((author) => author.Gender.toLowerCase() === "ស្រី");
 
-      setMaleAuthorList(maleAuthors);
-      setFemaleAuthorList(femaleAuthors);
+        setMaleAuthorList(maleAuthors);
+        setFemaleAuthorList(femaleAuthors);
+      } catch (error) {
+        console.error("Error fetching authors:", error.message);
+      }
     };
     getAuthors();
   }, [deleteSuccess, updateSuccess]);
@@ -131,9 +189,6 @@ export const AuthorList = () => {
   };
   return (
     <div className="container w-auto">
-      <SeachAuthor />
-      {/* Dropdown selector for sorting */}
-      {/* Dropdown selector for sorting */}
       <div className="flex mb-4 pr-4 w-full justify-end ">
         <select className="p-2 border rounded-md " onChange={(e) => handleSort(e.target.value)}>
           <option value="">Sort : ទាំងអស់ (All)</option>
@@ -141,43 +196,67 @@ export const AuthorList = () => {
           <option value="ស្រី">ស្រី (Female)</option>
         </select>
       </div>
-      {authorList.map((author) => (
-        <div
-          key={author.id}
-          className={`flex w-full items-center mb-2 p-4 rounded-lg ${
-            hoveredAuthor === author.id ? "bg-blue-200" : "bg-white"
-          }`}
-          onMouseEnter={() => setHoveredAuthor(author.id)}
-          onMouseLeave={() => setHoveredAuthor(null)}
-        >
-          <img src={author.imgAuth} alt={author.authName} className="w-[200px] h-[200px]" />
-          <div className="ml-8">
-            <p className="text-lg font-bold font-title">{author.authName}</p>
-            <p className="font-title">{author.Gender}</p>
-            <p className="font-title">{author.DOB}</p>
-          </div>
-          <div className="ml-auto flex">
-            <button
-              className="mr-2 bg-green-500 text-white p-2 active:bg-blue-500 rounded-lg"
-              onClick={() => handleUpdate(author)}
+      <div className="flex mb-4 pr-4 w-full justify-end ">
+        <input
+          type="text"
+          placeholder="Search by name"
+          className="p-2 border rounded-md mr-2"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button className="p-2 bg-blue-500 text-white rounded-md" onClick={handleSearchButtonClick}>
+          Search
+        </button>
+        {searchQuery && (
+          <button className="p-2 bg-gray-500 text-white rounded-md ml-2" onClick={handleClearSearch}>
+            Clear
+          </button>
+        )}
+      </div>
+      {authorList.length > 0 && (
+        <>
+          {authorList.map((author) => (
+            <div
+              key={author.id}
+              className={`flex w-full items-center mb-2 p-4 rounded-lg ${
+                hoveredAuthor === author.id ? "bg-blue-200" : "bg-white"
+              }`}
+              onMouseEnter={() => setHoveredAuthor(author.id)}
+              onMouseLeave={() => setHoveredAuthor(null)}
             >
-              Update
-            </button>
-            <button
-              className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded-lg"
-              onClick={() => handleDelete(author.id, author.imgAuth)}
-            >
-              Delete
-            </button>
-            <button
-              className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
-              onClick={() => handleAuthorDetail(author)}
-            >
-              Author Detail
-            </button>
-          </div>
-        </div>
-      ))}
+              <img src={author.imgAuth} alt={author.authName} className="w-[200px] h-[200px]" />
+              <div className="ml-8">
+                <p className="text-lg font-bold font-title">{author.authName}</p>
+                <p className="font-title">{author.Gender}</p>
+                <p className="font-title">{author.DOB}</p>
+              </div>
+              <div className="ml-auto flex">
+                <button
+                  className="mr-2 bg-green-500 text-white p-2 active:bg-blue-500 rounded-lg"
+                  onClick={() => handleUpdate(author)}
+                >
+                  Update
+                </button>
+                <button
+                  className="mr-2 bg-red-500 text-white active:bg-blue-500 p-2 rounded-lg"
+                  onClick={() => handleDelete(author.id, author.imgAuth)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="mr-2 bg-gray-900 text-white p-2 active:bg-blue-500 rounded-lg"
+                  onClick={() => handleAuthorDetail(author)}
+                >
+                  Author Detail
+                </button>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+      {authorList.length === 0 && (
+        <div className="text-center text-gray-700 mt-4">{loading ? "" : "No authors found."}</div>
+      )}
       {/* Delete Modal */}
       <Modal
         isOpen={showModal}
@@ -186,9 +265,7 @@ export const AuthorList = () => {
         loading={loading}
         deleteSuccess={deleteSuccess}
       />
-
       {loading && <LoadingProcess />}
-
       {/* Delete Success Modal */}
       {deleteSuccess && (
         <div className="fixed inset-0 z-50">
@@ -203,7 +280,6 @@ export const AuthorList = () => {
           </div>
         </div>
       )}
-
       {/* Update Modal */}
       <div className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -285,11 +361,9 @@ export const AuthorList = () => {
           </div>
         </div>
       </div>
-
       {/* Loading Process during Update */}
       {loading && updateModalOpen && <LoadingProcess />}
       {/* Button for sorting */}
-
       {/* Update Success Modal */}
       {updateSuccess && (
         <div className="fixed inset-0 z-50">
@@ -304,7 +378,6 @@ export const AuthorList = () => {
           </div>
         </div>
       )}
-
       {/* Author Detail Modal */}
       <div className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
