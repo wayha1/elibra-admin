@@ -150,7 +150,7 @@ export const AuthorList = () => {
           onMouseEnter={() => setHoveredAuthor(author.id)}
           onMouseLeave={() => setHoveredAuthor(null)}
         >
-          <img src={author.imgAuth} alt={author.authName} className="w-40 h-50" />
+          <img src={author.imgAuth} alt={author.authName} className="w-[200px] h-[200px]" />
           <div className="ml-8">
             <p className="text-lg font-bold font-title">{author.authName}</p>
             <p className="font-title">{author.Gender}</p>
@@ -309,32 +309,34 @@ export const AuthorList = () => {
       <div className={`fixed inset-0 z-50 ${authorDetailModalOpen ? "block" : "hidden"}`}>
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-white p-4 rounded shadow-xl mb-2">
-            <h2 className="text-2xl font-bold mb-4">Author Detail</h2>
-            <p className="flex text-xl font-bold ">
-              Name:
-              <p className="flex ml-4 text-gray-700 hover:text-sky-800">{updatedAuthor.authName}</p>
-            </p>
-            <p className="flex text-xl font-bold ">
-              Gender: <p className="flex ml-4 text-gray-700">{updatedAuthor.Gender}</p>
-            </p>
-            <p className="flex text-xl font-bold ">
-              Description:{" "}
-              <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased	">{updatedAuthor.Decs}</p>
-            </p>
-            <p className="flex text-xl font-bold ">
-              Date of Birth: <p className="flex ml-4 text-gray-700">{updatedAuthor.authDOB}</p>
-            </p>
-            <div className="flex w-full items-center justify-center ">
-              <img src={updatedAuthor.imgAuth} className="w-[500px] h-[500px] border-4 " />
+          <div className="flex bg-white p-4 rounded shadow-xl mb-2 items-center justify-center">
+            <div className="w-[50%] ">
+              <img src={updatedAuthor.imgAuth} className="w-[500px] h-[500px] border-2" />
             </div>
-            <div className="flex justify-end mt-4">
-              <button
-                className="bg-gray-500 text-white p-2 rounded hover:bg-gray-800"
-                onClick={() => setAuthorDetailModalOpen(false)}
-              >
-                Close
-              </button>
+            <div className="flex flex-col w-[50%]">
+              <h2 className="flex text-2xl font-bold mb-4">Author Detail</h2>
+              <p className="flex text-xl font-bold ">
+                Name:
+                <p className="flex ml-4 text-gray-700 hover:text-sky-800">{updatedAuthor.authName}</p>
+              </p>
+              <p className="flex text-xl font-bold ">
+                Gender: <p className="flex ml-4 text-gray-700">{updatedAuthor.Gender}</p>
+              </p>
+              <p className="flex text-xl font-bold ">
+                Description:{" "}
+                <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased	">{updatedAuthor.Decs}</p>
+              </p>
+              <p className="flex text-xl font-bold ">
+                Date of Birth: <p className="flex ml-4 text-gray-700">{updatedAuthor.DOB}</p>
+              </p>
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-gray-500 text-white p-2 rounded hover:bg-gray-800"
+                  onClick={() => setAuthorDetailModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

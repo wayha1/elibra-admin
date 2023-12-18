@@ -11,6 +11,7 @@ export const NovelCrud = () => {
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
+  const [BookStock, setBookStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [BookCover, setBookCover] = useState(null);
@@ -41,14 +42,10 @@ export const NovelCrud = () => {
     const pdfRef = ref(imgDB, `WebsiteProject/Books/${BookPdf.name + uuidv4()}`);
 
     try {
-      // Upload image
       await uploadBytes(imgRef, BookCover);
       const imageUrl = await getDownloadURL(imgRef);
-
-      // Upload PDF
       await uploadBytes(pdfRef, BookPdf);
       const pdfUrl = await getDownloadURL(pdfRef);
-
       // Add document to Firestore
       await addDoc(value, {
         title: Booktitle,
@@ -57,7 +54,8 @@ export const NovelCrud = () => {
         date: BookDate,
         img: imageUrl,
         BookPdf: pdfUrl,
-        authorId: selectedAuthor, // Assuming you have an authorId field in your book document
+        authorId: selectedAuthor,
+        stock: BookStock, // Add the stock value
       });
 
       alert("Book data & Image Upload");
@@ -82,12 +80,19 @@ export const NovelCrud = () => {
 
   const handleDeleteBook = async (bookId) => {
     try {
-      await deleteDoc(doc(value, bookId));
+      const bookDoc = doc(value, bookId);
+      const bookData = (await getDocs(bookDoc)).data();
+
+      await deleteDoc(bookDoc);
       alert("Book deleted successfully");
 
       // Fetch updated books
       const booksCollection = await getDocs(value);
       setBooks(booksCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+
+      // Handle stock or other data accordingly (if needed)
+      const stock = bookData.stock;
+      // Perform additional actions based on stock or other data
     } catch (error) {
       console.error("Error deleting book:", error.message);
     } finally {
@@ -121,6 +126,14 @@ export const NovelCrud = () => {
         className="p-2"
         placeholder="ថ្ងៃ ខែ ឆ្នាំ ផលិត"
       />
+      <input
+        type="number"
+        value={BookStock}
+        onChange={(e) => setStock(Math.max(0, parseInt(e.target.value, 10)))}
+        className="p-2"
+        placeholder="Stock"
+      />
+
       <select value={selectedAuthor} onChange={(e) => setSelectedAuthor(e.target.value)} className="p-2">
         <option value="">Select an Author</option>
         {authorList.map((author) => (
