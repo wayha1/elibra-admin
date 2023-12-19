@@ -12,7 +12,7 @@ export const NovelCrud = () => {
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
   const [Stock, setStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
@@ -60,7 +60,7 @@ export const NovelCrud = () => {
         img: imageUrl,
         BookPdf: pdfUrl,
         authorId: selectedAuthor,
-        category: category, // Add category field
+        type: type, // Add category field
       });
 
       alert("Book data & Image Upload");
@@ -71,7 +71,7 @@ export const NovelCrud = () => {
       setBookPrice("");
       setBookDate("");
       setStock(0);
-      setCategory(""); // Reset category field
+      setType(""); // Reset category field
       setBookCover(null);
       setBookPdf(null);
 
@@ -122,8 +122,8 @@ export const NovelCrud = () => {
         placeholder="ចំនួនស្តុក"
       />
       <input
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        value={type}
+        onChange={(e) => setType(e.target.value)}
         placeholder="ប្រភេទសៀវភៅ"
         className="p-2 rounded-lg"
       />

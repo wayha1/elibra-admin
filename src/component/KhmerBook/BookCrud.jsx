@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess"; // Import the LoadingProcess component
+import { type } from "os";
 
 export const BookCrud = () => {
   const [books, setBooks] = useState([]);
@@ -12,7 +13,7 @@ export const BookCrud = () => {
   const [Bookdesc, setBookdesc] = useState("");
   const [BookPrice, setBookPrice] = useState("");
   const [BookDate, setBookDate] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
   const [Stock, setStock] = useState(0);
   const [authorList, setAuthorList] = useState([]);
   const [selectedAuthor, setSelectedAuthor] = useState("");
@@ -60,7 +61,7 @@ export const BookCrud = () => {
         img: imageUrl,
         BookPdf: pdfUrl,
         authorId: selectedAuthor,
-        category: category, // Add category field
+        type: type, // Add category field
       });
 
       alert("Book data & Image Upload");
@@ -71,7 +72,7 @@ export const BookCrud = () => {
       setBookPrice("");
       setBookDate("");
       setStock(0);
-      setCategory(""); // Reset category field
+      setType(""); // Reset category field
       setBookCover(null);
       setBookPdf(null);
 
@@ -122,8 +123,8 @@ export const BookCrud = () => {
         placeholder="ចំនួនស្តុក"
       />
       <input
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        value={type}
+        onChange={(e) => setType(e.target.value)}
         placeholder="ប្រភេទសៀវភៅ"
         className="p-2 rounded-lg"
       />
