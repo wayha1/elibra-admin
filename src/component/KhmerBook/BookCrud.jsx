@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import { FcAddImage } from "react-icons/fc";
 import { db, imgDB } from "../../firebase";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess"; // Import the LoadingProcess component
-import { type } from "os";
 
 export const BookCrud = () => {
   const [books, setBooks] = useState([]);
