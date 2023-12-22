@@ -102,7 +102,7 @@ export const BaciiBookList = () => {
         setBacData(data);
         const bookDataPromises = data.map(async (elem) => {
           try {
-            const BookPop = collection(db, `Books/${elem.id}/BacII`);
+            const BookPop = collection(db, `Books/${elem.id}/bacII`);
             const DataBooks = await getDocs(BookPop);
             const BookData = DataBooks.docs.map((bookDoc) => ({
               ...bookDoc.data(),
