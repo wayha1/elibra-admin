@@ -50,7 +50,7 @@ const SearchBook = () => {
         />
         <button className="ml-2 bg-blue-500 text-white p-2 rounded">Search</button>
         <button className="ml-2 bg-red-500 text-white p-2 rounded" onClick={handleClear}>
-          Clear
+          Cleard
         </button>
       </div>
 
