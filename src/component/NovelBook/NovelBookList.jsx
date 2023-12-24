@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
-import { ref, deleteObject, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
-//import SearchNovelBook from "./SearchNovelBook";
-// import SearchBook from "./SearchBook";
+//import SearchBook from "./SearchBook";
+import { FaRegFilePdf } from "react-icons/fa";
 
-export const NovelBookList = () => {
+const NovelBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
@@ -20,6 +20,8 @@ export const NovelBookList = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [updateSuccessPopup, setUpdateSuccessPopup] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearchActive, setIsSearchActive] = useState(false); // New state variable
   const [updatedBook, setUpdatedBook] = useState({
     title: "",
     price: "",
@@ -28,7 +30,6 @@ export const NovelBookList = () => {
     authorId: "",
     img: "",
   });
-
   // const handleSearch = (results) => {
   //   setSearchResults(results);
   //   setHoveredBook(null);
@@ -92,7 +93,7 @@ export const NovelBookList = () => {
       }
 
       await updateDoc(bookRef, newData);
-      setUpdateSuccess(true); // Set updateSuccess to true on successful update
+      setUpdateSuccess(true);
     } catch (error) {
       console.error("Error updating document or image:", error.message);
     } finally {
@@ -148,22 +149,22 @@ export const NovelBookList = () => {
   return (
     <section>
       <div className="container w-auto">
-        {/* <SearchNovelBook onSearch={handleSearch}/> */}
-        {NovelBook.map((item, index) => (
+        {/* <SearchBook onSearch={handleSearch} /> */}
+        {(isSearchActive ? searchResults : NovelBook).map((item, index) => (
           <div
-            key={item.index}
+            key={item.id}
             className={`flex w-full items-center mb-2 p-4 rounded-lg ${
               hoveredBook === item.id ? "bg-blue-200" : "bg-white"
-            }`}
+            } ${isSearchActive ? "hidden" : ""}`}
             onMouseEnter={() => setHoveredBook(item.id)}
             onMouseLeave={() => setHoveredBook(null)}
           >
-            <img src={item.img} alt={`Novel-${index}`} className="w-40 h-40" />
+            <img src={item.img} alt={`Novel-${index}`} className="w-[200px] h-[200px]" />
             <div className="flex w-full justify-between items-center">
-              <div className="flex flex-col ml-4  text-lg font-bold space-y-4">
-                <h1 className="">{item.title}</h1>
-                <h3 className="">{item.price}</h3>
-                <h3 className="">{item.stock} ក្បាល</h3>
+              <div className="flex flex-col ml-7 text-lg font-bold space-y-4">
+                <h1>{item.title}</h1>
+                <h3>{item.price}</h3>
+                <h3>{item.stock} ក្បាល</h3>
                 <h3 className="whitespace-nowrap">{item.date}</h3>
                 <span>{item.authorId}</span>
               </div>
@@ -191,7 +192,7 @@ export const NovelBookList = () => {
             </div>
           </div>
         ))}
-
+        {loading && showSuccessPopup && <LoadingProcess />}
         {openDeleteModal && (
           <div className="fixed inset-0 flex items-center justify-center">
             <div
@@ -317,54 +318,44 @@ export const NovelBookList = () => {
         {/* Show Book Detail */}
         <div className={`fixed inset-0 z-50 ${bookDetailModalOpen ? "block" : "hidden"}`}>
           <div className="absolute inset-0 bg-black opacity-50 "></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-white p-4 rounded shadow-xl mb-2 px-5">
-              <h2 className="text-2xl font-bold mb-4">Book Detail</h2>
-              <p className="flex text-xl font-bold">
-                Title:
-                <p className="flex ml-4 text-gray-700 hover:text-sky-800"> {updatedBook.title}</p>
-              </p>
-              <p className="flex text-xl font-bold">
-                Price: <p className="flex ml-4 text-gray-700">{updatedBook.price}</p>
-              </p>
-              <p className="flex text-xl font-bold">
-                Description:{" "}
-                <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased ">{updatedBook.decs}</p>
-              </p>
-              <p className="flex text-xl font-bold">
-                Date of Made: <p className="flex ml-4 text-gray-700">{updatedBook.date}</p>
-              </p>
-              {/* Add more details for other properties like authorId, img, etc. */}
-              <div className="flex w-full items-center justify-center ">
-                <img
-                  src={updatedBook.img}
-                  className="w-[500px] h-[500px] border-4 "
-                  alt={updatedBook.title}
-                />
-              </div>
-
-              {/* Display PDF Link */}
-              {updatedBook.BookPdf && (
-                <div className="mt-4">
-                  <p className="text-xl font-bold ">PDF Link:</p>
-                  <a
-                    className="font-bold"
-                    href={updatedBook.BookPdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open PDF {updatedBook.BookPdf}
+          <div className="absolute inset-0 flex items-center justify-center px-5">
+            <div className="flex bg-white p-4 rounded shadow-xl mb-2 ">
+              <div className="w-[50%] flex flex-col items-center justify-center">
+                <img src={updatedBook.img} className="w-[500px] h-[500px] border-2 " alt={updatedBook.title} />
+                {updatedBook.BookPdf && (
+                  <a href={updatedBook.BookPdf} target="_blank" rel="noopener noreferrer">
+                    <button className="flex text-xl font-bold text-red-600 ml-4">
+                      <p className="flex">View PDF</p>
+                      <FaRegFilePdf className="flex mt-1" />
+                    </button>
                   </a>
-                </div>
-              )}
+                )}
+              </div>
+              <div className="flex flex-col w-[50%] h-auto">
+                <h2 className="flex text-2xl font-bold mb-4">Book Detail</h2>
+                <p className="flex text-xl font-bold">
+                  Title:
+                  <p className="flex ml-4 text-gray-700 hover:text-sky-800"> {updatedBook.title}</p>
+                </p>
+                <p className="flex text-xl font-bold">
+                  Price: <p className="flex ml-4 text-gray-700">{updatedBook.price}</p>
+                </p>
+                <p className="flex text-xl font-bold">
+                  Description:{" "}
+                  <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased ">{updatedBook.decs}</p>
+                </p>
+                <p className="flex text-xl font-bold">
+                  Date of Made: <p className="flex ml-4 text-gray-700">{updatedBook.date}</p>
+                </p>
 
-              <div className="flex justify-end mt-4">
-                <button
-                  className="bg-gray-500 text-white p-2 rounded hover:bg-gray-800"
-                  onClick={() => setBookDetailModalOpen(false)}
-                >
-                  Close
-                </button>
+                <div className="flex justify-end mt-4">
+                  <button
+                    className="bg-gray-500 text-white p-2 rounded hover:bg-gray-800"
+                    onClick={() => setBookDetailModalOpen(false)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -373,3 +364,5 @@ export const NovelBookList = () => {
     </section>
   );
 };
+
+export default NovelBookList;

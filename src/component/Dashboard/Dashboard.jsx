@@ -6,7 +6,7 @@ import { NovelBook } from "../NovelBook/NovelBook";
 import { BaciiBook } from "../BacIIBook/BaciiBook";
 import { ComicBook } from "../ComicBook/ComicBook";
 import { PracticeBook } from "../PracticeBook/PracticeBook";
-import { Mathematic } from "../Mathematic/Mathematic";
+// import { Mathematic } from "../Mathematic/Mathematic";
 import { KhmerBook } from "../KhmerBook/KhmerBook";
 import { Generalbook } from "../GeneralBook/Generalbook";
 
@@ -29,8 +29,8 @@ export const Dashboard = () => {
         return <ComicBook />;
       case "/dashboard/practice-book":
         return <PracticeBook />;
-      case "/dashboard/math-book":
-        return <Mathematic />;
+      // case "/dashboard/math-book":
+      //   return <Mathematic />;
       case "/dashboard/khmer-book":
         return <KhmerBook />;
       default:
@@ -143,7 +143,7 @@ export const Dashboard = () => {
               សៀវភៅ លំហាត់
             </Link>
           </li>
-          <li className="flex items-center justify-center">
+          {/* <li className="flex items-center justify-center">
             <Link
               to="/dashboard/math-book"
               className={`${
@@ -154,7 +154,7 @@ export const Dashboard = () => {
             >
               សៀវភៅ គណិតវិទ្យា
             </Link>
-          </li>
+          </li> */}
         </ul>
       </div>
       <div className="flex-grow overflow-y-auto bg-neutral-200 w-[75%] ">{renderContent()}</div>
