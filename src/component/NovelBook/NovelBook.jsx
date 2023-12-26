@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NovelBookList } from "./NovelBookList";
+import NovelBookList from "./NovelBookList";
 import { NovelCrud } from "./NovelCrud";
 import { SearchNovelBook } from "./SearchNovelBook";
 
