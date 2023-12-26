@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, updateDoc, } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";

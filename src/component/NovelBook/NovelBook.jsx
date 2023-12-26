@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NovelBookList } from "./NovelBookList";
 import { NovelCrud } from "./NovelCrud";
 import NovelBookList from "./NovelBookList";
 //import { SearchNovelBook } from "./SearchNovelBook";
@@ -15,7 +16,7 @@ export const NovelBook = () => {
   const renderContent = () => {
     switch (activeComponent) {
       case "View-Book":
-        return <NovelBookList />
+        return <NovelBookList />;
       case "Add Book":
         return <NovelCrud />;
       default:
@@ -32,7 +33,10 @@ export const NovelBook = () => {
 
       <ul className="flex items-center justify-center bg-shadow-lg py-3 bg-white ">
         {BookHead.map((head) => (
-          <li key={head.id} className="hover:scale-110 transition duration-150 ease-in-out whitespace-nowrap">
+          <li
+            key={head.id}
+            className="hover:scale-110 transition duration-150 ease-in-out whitespace-nowrap"
+          >
             <span
               className={`${
                 activeComponent === head.name
