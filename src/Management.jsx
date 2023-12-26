@@ -1,8 +1,6 @@
 import React from 'react'
 
-
-
-export const Management = () => {
+export default function Management() {
   return (
     <div>Management</div>
   )

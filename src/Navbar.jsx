@@ -6,6 +6,11 @@ export const Navbar = () => {
     setIsAccountDropdownOpen(!isAccountDropdownOpen);
   };
 
+  const logOut = () => {
+    localStorage.clear()
+    window.location.reload()
+  }
+
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-gray-700">
@@ -45,9 +50,16 @@ export const Navbar = () => {
                   Settings
                 </a>
                 <div className="dropdown-divider"></div>
-                <a className="dropdown-item" href="/account/logout">
+                {/* <a className="dropdown-item" href="/account/logout">
                   Logout
-                </a>
+                </a> */}
+                <button 
+                className="bg-blue-500 text-white py-2 rounded-xl hover:bg-red-600 
+                transition w-full max-w-[350px] duration-300 mt-4"
+                onClick={logOut}
+                >
+                  Sign Out
+                </button>
               </div>
             </div>
           </div>
