@@ -71,7 +71,7 @@ export const Navbar = () => {
               className={`absolute -right-20 mt-5 w-60 bg-gray-300 
               border rounded-lg shadow-md overflow-hidden dropdown-menu ${
                 isAccountDropdownOpen ? "block" : "hidden"
-              } bg-gray-400 p-3`}
+              } bg-blue-200 p-3`}
             >
               <a className="dropdown-item text-xl hover:text-blue-300" href="/account">
                 Profile
