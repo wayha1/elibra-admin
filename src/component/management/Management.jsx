@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 
-function Homepage() {
+const Management = () => {
   const [isLoading, setIsLoading] = useState(true);
-
-  // Simulate loading delay (you can replace this with your actual data fetching logic)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Simulating a 2-second loading time
+    }, 1000); 
     return () => clearTimeout(timer);
   }, []);
 
@@ -25,6 +23,6 @@ function Homepage() {
       )}
     </>
   );
-}
+};
 
-export default Homepage;
+export default Management;

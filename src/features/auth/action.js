@@ -1,17 +1,27 @@
 import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 
 export const signIn = async (email, password) => {
   try {
+    if (!email || !password) {
+      console.error("Please provide both email and password.");
+      return false;
+    }
+
+    // Wait for Firebase authentication to initialize
+    await new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        resolve();
+      });
+    });
+
+    // Sign in using provided email and password
     await signInWithEmailAndPassword(auth, email, password);
-    alert("Welcome to our website");
+
     return true;
   } catch (error) {
-    if (error.code === "auth/invalid-login-credentials") {
-      alert("Incorrect password. Please try again.");
-    } else {
-      alert("An error occurred during sign-in.");
-    }
-    return;
+    console.error("Error signing in:", error.code, error.message);
+    return false;
   }
 };

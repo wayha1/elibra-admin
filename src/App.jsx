@@ -9,26 +9,22 @@ import { Account } from "./component/account/Account";
 import { AddAuthor } from "./component/Author/AddAuthor";
 import { AuthorList } from "./component/Author/AuthorList";
 import Login from "./features/auth/Login";
-
+import ProtectedRoute from "./ProtectedRoute"; // Update the path
+import UnauthorizedPage from "./component/Unauthorized/UnauthorizedPage";
 function App() {
   return (
-    <>
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/dashboard/*" element={<Dashboard />} />
-          <Route path="/aboutus" element={<Aboutus />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/inputauthor" element={<AddAuthor />} />
-          <Route path="/dashboard/author/list" element={<AuthorList />} />
-          <Route path="/login" element={<Login/>}/>
-          {/* <Route path="/das" */}
-          {/* Add more routes for other components */}
-          {/* ... (more routes) */}
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/dashboard/*" element={<ProtectedRoute element={<Dashboard />} />} />
+        <Route path="/account" element={<ProtectedRoute element={<Account />} />} />
+        <Route path="/inputauthor" element={<ProtectedRoute element={<AddAuthor />} />} />
+        <Route path="/dashboard/author/list" element={<ProtectedRoute element={<AuthorList />} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      </Routes>
+    </Router>
   );
 }
 

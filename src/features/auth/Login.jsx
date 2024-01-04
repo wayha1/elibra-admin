@@ -1,14 +1,30 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { signIn } from "./action.js";
-import LoginWithGoogle from "./LoginWithGoogle.jsx";
+// Login.js
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { signIn } from "./action";
+import { LoadingProcess } from "../../component/LoadingProcess/LoadingProcess";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
 
-export default function Login() {
+const Login = () => {
   const navigate = useNavigate();
   const [inputData, setInputData] = useState({
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/dashboard/management");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [navigate]);
 
   const onChange = (e) => {
     setInputData((prevState) => ({
@@ -19,10 +35,17 @@ export default function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const { email, password } = inputData;
-    const signInStatus = await signIn(email, password);
-    if (signInStatus) {
-      navigate("/dashboard/management");
+    setIsSubmitting(true);
+
+    try {
+      const { email, password } = inputData;
+      console.log("Attempting to sign in with:", email, password); 
+
+      await signIn(email, password);
+    } catch (error) {
+      console.error("Error signing in:", error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -32,7 +55,6 @@ export default function Login() {
         <h1 className="text-3xl font-semibold mb-5">Sign In</h1>
         <p className="text-sm text-gray-600 mb-8">Please provide your credentials</p>
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          {/* Form Inputs */}
           <input
             onChange={onChange}
             type="text"
@@ -49,20 +71,16 @@ export default function Login() {
             className="p-2 border rounded-xl focus:outline-none focus:border-blue-500"
             autoComplete="off"
           />
-          <button type="submit" className="bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-300">
-            Sign In
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition duration-300"
+          >
+            {isSubmitting ? <LoadingProcess /> : "Sign In"}
           </button>
-          <Link to="/resetPassword" className="text-gray-500 text-sm self-end">
-            Forget your password?
-          </Link>
         </form>
-        <div className="mt-5 grid grid-cols-3 items-center text-gray-400">
-          <hr className="border-gray-600" />
-          <p className="text-center">Or</p>
-          <hr className="border-gray-600" />
-        </div>
-        <LoginWithGoogle />
       </div>
     </div>
   );
-}
+};
+
+export default Login;

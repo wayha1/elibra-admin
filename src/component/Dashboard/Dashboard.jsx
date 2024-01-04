@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Management from "../../Management";
+import Management from "../management/Management";
 import { Author } from "../Author/Author";
 import { NovelBook } from "../NovelBook/NovelBook";
 import { BaciiBook } from "../BacIIBook/BaciiBook";

@@ -1,70 +1,89 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
+
 export const Navbar = () => {
-  
+  const navigate = useNavigate();
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [unsubscribe, setUnsubscribe] = useState(null);
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const authStateChangedListener = (admin) => {
+      if (!admin) {
+        navigate("/login");
+      }
+    };
+    const authUnsubscribe = onAuthStateChanged(auth, authStateChangedListener);
+    setUnsubscribe(() => authUnsubscribe);
+    return () => {
+      authUnsubscribe();
+    };
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsAccountDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   const toggleAccountDropdown = () => {
     setIsAccountDropdownOpen(!isAccountDropdownOpen);
   };
 
-  const logOut = () => {
-    localStorage.clear()
-    window.location.reload()
-  }
+  const logOut = async () => {
+    try {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <>
-      <nav className="navbar navbar-expand-lg bg-gray-700">
-        <div className="flex space-x-10 justify-between w-screen">
-          <a className="ml-5 navbar-brand text-light" href="/dashboard/management">
-            E-Libra Dashboard
-          </a>
-          <div className="flex mx-4">
-            <a className="navbar-brand text-light" href="/">
-              Home
-            </a>
-            {/* <a className="navbar-brand text-light" href="/aboutus">
-              About us
-            </a> */}
-            {/* Dropdown for Account */}
-            <div className="dropdown flex" onClick={toggleAccountDropdown}>
-              <a
-                className="navbar-brand text-light dropdown-toggle "
-                // href="/account"
-                role="button"
-                id="accountDropdown"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded={isAccountDropdownOpen}
-              >
-                Account
+    <nav className="bg-gray-700 p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <a className="text-white text-xl" href="/dashboard/management">
+          E-Libra Dashboard
+        </a>
+        <div className="flex items-center relative" ref={dropdownRef}>
+          <div className="dropdown relative">
+            <button
+              className="text-white text-xl dropdown-toggle"
+              onClick={toggleAccountDropdown}
+            >
+              Account
+            </button>
+            <div
+              className={`absolute -right-20 mt-5 w-60 bg-gray-300 
+              border rounded-lg shadow-md overflow-hidden dropdown-menu ${
+                isAccountDropdownOpen ? "block" : "hidden"
+              } bg-gray-400 p-3`}
+            >
+              <a className="dropdown-item text-xl hover:text-blue-300" href="/account">
+                Profile
               </a>
-              <div
-                className={`dropdown-menu mt-5 ${isAccountDropdownOpen ? "show" : ""}`}
-                aria-labelledby="accountDropdown"
-              >
-                {/* Dropdown items */}
-                <a className="dropdown-item" href="/account">
-                  Profile
-                </a>
-                <a className="dropdown-item" href="/account/settings">
-                  Settings
-                </a>
-                <div className="dropdown-divider"></div>
-                {/* <a className="dropdown-item" href="/account/logout">
-                  Logout
-                </a> */}
-                <button 
-                className="bg-blue-500 text-white py-2 rounded-xl hover:bg-red-600 
-                transition w-full max-w-[350px] duration-300 mt-4"
-                onClick={logOut}
-                >
-                  Sign Out
-                </button>
-              </div>
+              <div className={`dropdown-divider${isAccountDropdownOpen ? "block" : "hidden"}`}></div>
+              <button className="dropdown-item text-xl hover:text-blue-300 mt-3" onClick={logOut}>
+                Logout
+              </button>
             </div>
           </div>
         </div>
-      </nav>
-    </>
+      </div>
+    </nav>
   );
 };
