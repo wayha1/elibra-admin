@@ -4,7 +4,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
-import SearchBook from "./SearchBook";
+// import SearchBook from "./SearchBook";
 import { FaRegFilePdf } from "react-icons/fa";
 
 const KhmerBookList = () => {
@@ -149,7 +149,7 @@ const KhmerBookList = () => {
   return (
     <section>
       <div className="container w-auto">
-        <SearchBook onSearch={handleSearch} />
+        {/* <SearchBook onSearch={handleSearch} /> */}
         {(isSearchActive ? searchResults : NovelBook).map((item, index) => (
           <div
             key={item.id}
