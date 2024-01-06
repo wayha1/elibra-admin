@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ComicBookList from "./ComicBookList";
 import { BookCrud } from "./ComicCrud";
+import { ComicBookList } from "./ComicBookList";
 
 export const ComicBook = () => {
   const [book, setBook] = useState([

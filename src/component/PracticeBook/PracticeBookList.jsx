@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
-//import SearchBook from "./SearchBook";
 import { FaRegFilePdf } from "react-icons/fa";
+import { deleteObject } from "firebase/storage";
 
-const PracticeBookList = () => {
+export const PracticeBookList = () => {
   const [bacData, setBacData] = useState([]);
   const [NovelBook, setNovelBook] = useState([]);
   const [selectBook, setSelectBook] = useState({});
@@ -30,11 +38,11 @@ const PracticeBookList = () => {
     authorId: "",
     img: "",
   });
-  // const handleSearch = (results) => {
-  //   setSearchResults(results);
-  //   setHoveredBook(null);
-  //   setIsSearchActive(results.length > 0); // Set isSearchActive based on whether there are search results
-  // };
+  const handleSearch = (results) => {
+    setSearchResults(results);
+    setHoveredBook(null);
+    setIsSearchActive(results.length > 0); // Set isSearchActive based on whether there are search results
+  };
 
   const handleBookDetail = (bookId) => {
     const selectedBook = NovelBook.find((book) => book.id === bookId);
@@ -55,9 +63,40 @@ const PracticeBookList = () => {
       if (!selectBook) {
         throw new Error("Selected book is undefined");
       }
-      const bookRef = doc(db, "Books", "All_Genre", "exercise", selectBook.book);
+  
+      // Construct the Firestore document reference
+      const bookRef = doc(
+        db,
+        "Books",
+        "All_Genre",
+        "exercise",
+        selectBook.book
+      );
+  
+      // Fetch the Firestore document data before deleting
+      const bookData = (await getDoc(bookRef)).data();
+      if (!bookData) {
+        throw new Error("Document data not found");
+      }
+  
+      // Delete the Firestore document
       await deleteDoc(bookRef);
-
+  
+      // Extract the image URL and bookPdf URL from the document data
+      const { img: imageUrl, BookPdf: bookPdfUrl } = bookData;
+  
+      // Delete the storage data if an image URL is present
+      if (imageUrl) {
+        const imageRef = ref(imgDB, imageUrl);
+        await deleteObject(imageRef);
+      }
+  
+      // Delete the bookPdf from storage if it exists
+      if (bookPdfUrl) {
+        const bookPdfRef = ref(imgDB, bookPdfUrl);
+        await deleteObject(bookPdfRef);
+      }
+  
       setShowSuccessPopup(true);
       alert("Delete Successful!!");
     } catch (error) {
@@ -67,6 +106,8 @@ const PracticeBookList = () => {
       setOpenDeleteModal(false);
     }
   };
+  
+  
 
   const handleUpdate = (book) => {
     setUpdatedBook(book);
@@ -76,7 +117,13 @@ const PracticeBookList = () => {
   const confirmUpdate = async () => {
     setLoading(true);
     try {
-      const bookRef = doc(db, "Books", "All_Genre", "exercise", updatedBook.id);
+      const bookRef = doc(
+        db,
+        "Books",
+        "All_Genre",
+        "exercise",
+        updatedBook.id
+      );
       const newData = {
         title: updatedBook.title,
         price: updatedBook.price,
@@ -86,7 +133,10 @@ const PracticeBookList = () => {
       };
 
       if (bookImage) {
-        const newImgRef = ref(imgDB, `WebsiteProject/Books/${bookImage.name + uuidv4()}`);
+        const newImgRef = ref(
+          imgDB,
+          `WebsiteProject/Books/${bookImage.name + uuidv4()}`
+        );
         await uploadBytes(newImgRef, bookImage);
         const newImgUrl = await getDownloadURL(newImgRef);
         newData.img = newImgUrl;
@@ -107,7 +157,10 @@ const PracticeBookList = () => {
       try {
         const contain = collection(db, "Books");
         const snapshot = await getDocs(contain);
-        const data = snapshot.docs.map((val) => ({ ...val.data(), id: val.id }));
+        const data = snapshot.docs.map((val) => ({
+          ...val.data(),
+          id: val.id,
+        }));
         setBacData(data);
         const bookDataPromises = data.map(async (elem) => {
           try {
@@ -124,7 +177,9 @@ const PracticeBookList = () => {
           }
         });
 
-        const bookData = (await Promise.all(bookDataPromises)).flatMap((data) => data || []);
+        const bookData = (await Promise.all(bookDataPromises)).flatMap(
+          (data) => data || []
+        );
         bookData.sort((a, b) => a.title.localeCompare(b.title));
         setNovelBook(bookData);
 
@@ -149,7 +204,6 @@ const PracticeBookList = () => {
   return (
     <section>
       <div className="container w-auto">
-        {/* <SearchBook onSearch={handleSearch} /> */}
         {(isSearchActive ? searchResults : NovelBook).map((item, index) => (
           <div
             key={item.id}
@@ -159,7 +213,11 @@ const PracticeBookList = () => {
             onMouseEnter={() => setHoveredBook(item.id)}
             onMouseLeave={() => setHoveredBook(null)}
           >
-            <img src={item.img} alt={`Novel-${index}`} className="w-[200px] h-[200px]" />
+            <img
+              src={item.img}
+              alt={`Novel-${index}`}
+              className="w-[200px] h-[200px]"
+            />
             <div className="flex w-full justify-between items-center">
               <div className="flex flex-col ml-7 text-lg font-bold space-y-4">
                 <h1>{item.title}</h1>
@@ -204,7 +262,7 @@ const PracticeBookList = () => {
               <p>Are you sure you want to delete this book?</p>
               <div className="mt-4 flex justify-end">
                 <button
-                  className="mr-2 bg-red-500 text-white p-2 rounded"
+                  className="mr-2 bg-red-500 text-white p-2 rounded active:bg-blue-200"
                   onClick={() => {
                     confirmDelete();
                   }}
@@ -223,7 +281,11 @@ const PracticeBookList = () => {
         )}
 
         {/* Update Modal */}
-        <div className={`fixed inset-0 z-30 ${updateModalOpen ? "block" : "hidden"}`}>
+        <div
+          className={`fixed inset-0 z-30 ${
+            updateModalOpen ? "block" : "hidden"
+          }`}
+        >
           <div className="absolute inset-0 bg-black opacity-50"></div>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white p-4 rounded shadow-lg">
@@ -231,39 +293,55 @@ const PracticeBookList = () => {
 
               {/* Update input fields to allow user input */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Title:</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Title:
+                </label>
                 <input
                   type="text"
                   className="mt-1 p-2 border rounded-md w-full"
                   value={updatedBook.title}
-                  onChange={(e) => setUpdatedBook({ ...updatedBook, title: e.target.value })}
+                  onChange={(e) =>
+                    setUpdatedBook({ ...updatedBook, title: e.target.value })
+                  }
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Price:</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Price:
+                </label>
                 <input
                   type="text"
                   className="mt-1 p-2 border rounded-md w-full"
                   value={updatedBook.price}
-                  onChange={(e) => setUpdatedBook({ ...updatedBook, price: e.target.value })}
+                  onChange={(e) =>
+                    setUpdatedBook({ ...updatedBook, price: e.target.value })
+                  }
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Description:</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Description:
+                </label>
                 <input
                   type="text"
                   className="mt-1 p-2 border rounded-md w-full"
                   value={updatedBook.decs}
-                  onChange={(e) => setUpdatedBook({ ...updatedBook, decs: e.target.value })}
+                  onChange={(e) =>
+                    setUpdatedBook({ ...updatedBook, decs: e.target.value })
+                  }
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Date of Made:</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Date of Made:
+                </label>
                 <input
                   type="text"
                   className="mt-1 p-2 border rounded-md w-full"
                   value={updatedBook.date}
-                  onChange={(e) => setUpdatedBook({ ...updatedBook, date: e.target.value })}
+                  onChange={(e) =>
+                    setUpdatedBook({ ...updatedBook, date: e.target.value })
+                  }
                 />
               </div>
 
@@ -280,7 +358,10 @@ const PracticeBookList = () => {
                 />
               </div>
               <div className="flex justify-end">
-                <button className="mr-2 bg-green-500 text-white p-2 rounded" onClick={() => confirmUpdate()}>
+                <button
+                  className="mr-2 bg-green-500 text-white p-2 rounded"
+                  onClick={() => confirmUpdate()}
+                >
                   Update
                 </button>
                 <button
@@ -316,14 +397,26 @@ const PracticeBookList = () => {
           </div>
         )}
         {/* Show Book Detail */}
-        <div className={`fixed inset-0 z-50 ${bookDetailModalOpen ? "block" : "hidden"}`}>
+        <div
+          className={`fixed inset-0 z-50 ${
+            bookDetailModalOpen ? "block" : "hidden"
+          }`}
+        >
           <div className="absolute inset-0 bg-black opacity-50 "></div>
           <div className="absolute inset-0 flex items-center justify-center px-5">
             <div className="flex bg-white p-4 rounded shadow-xl mb-2 ">
               <div className="w-[50%] flex flex-col items-center justify-center">
-                <img src={updatedBook.img} className="w-[500px] h-[500px] border-2 " alt={updatedBook.title} />
+                <img
+                  src={updatedBook.img}
+                  className="w-[500px] h-[500px] border-2 "
+                  alt={updatedBook.title}
+                />
                 {updatedBook.BookPdf && (
-                  <a href={updatedBook.BookPdf} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={updatedBook.BookPdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <button className="flex text-xl font-bold text-red-600 ml-4">
                       <p className="flex">View PDF</p>
                       <FaRegFilePdf className="flex mt-1" />
@@ -335,17 +428,24 @@ const PracticeBookList = () => {
                 <h2 className="flex text-2xl font-bold mb-4">Book Detail</h2>
                 <p className="flex text-xl font-bold">
                   Title:
-                  <p className="flex ml-4 text-gray-700 hover:text-sky-800"> {updatedBook.title}</p>
+                  <p className="flex ml-4 text-gray-700 hover:text-sky-800">
+                    {" "}
+                    {updatedBook.title}
+                  </p>
                 </p>
                 <p className="flex text-xl font-bold">
-                  Price: <p className="flex ml-4 text-gray-700">{updatedBook.price}</p>
+                  Price:{" "}
+                  <p className="flex ml-4 text-gray-700">{updatedBook.price}</p>
                 </p>
                 <p className="flex text-xl font-bold">
                   Description:{" "}
-                  <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased ">{updatedBook.decs}</p>
+                  <p className="flex ml-4 text-gray-700 text-lg subpixel-antialiased ">
+                    {updatedBook.decs}
+                  </p>
                 </p>
                 <p className="flex text-xl font-bold">
-                  Date of Made: <p className="flex ml-4 text-gray-700">{updatedBook.date}</p>
+                  Date of Made:{" "}
+                  <p className="flex ml-4 text-gray-700">{updatedBook.date}</p>
                 </p>
 
                 <div className="flex justify-end mt-4">
@@ -364,5 +464,3 @@ const PracticeBookList = () => {
     </section>
   );
 };
-
-export default PracticeBookList;

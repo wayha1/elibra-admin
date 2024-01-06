@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 // import { NovelBookList } from "./NovelBookList";
 import { NovelCrud } from "./NovelCrud";
-import NovelBookList from "./NovelBookList";
+import { NovelBookList } from "./NovelBookList";
 //import { SearchNovelBook } from "./SearchNovelBook";
 
 export const NovelBook = () => {
@@ -16,7 +16,7 @@ export const NovelBook = () => {
   const renderContent = () => {
     switch (activeComponent) {
       case "View-Book":
-        return <NovelBookList />;
+        return <NovelBookList />
       case "Add Book":
         return <NovelCrud />;
       default:

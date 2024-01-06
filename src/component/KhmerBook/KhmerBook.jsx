@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import KhmerBookList from "./KhmerBookList";
 import { BookCrud } from "./bookCrud";
+import { KhmerBookList } from "./KhmerBookList";
 
 export const KhmerBook = () => {
   const [book, setBook] = useState([
@@ -14,7 +14,7 @@ export const KhmerBook = () => {
   const renderContent = () => {
     switch (activeComponent) {
       case "View Book":
-        return <KhmerBookList />;
+        return <KhmerBookList />
       case "Add Book":
         return <BookCrud />;
       default:
