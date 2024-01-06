@@ -19,6 +19,7 @@ import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 export const AuthorList = () => {
   const [authorList, setAuthorList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [rerenderKey, setRerenderKey] = useState(0); // Step 1
   const [showModal, setShowModal] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [authImage, setAuthImage] = useState(null);
@@ -103,6 +104,7 @@ export const AuthorList = () => {
       await deleteDoc(authorRef);
       await deleteObject(imgRef);
       setDeleteSuccess(true);
+      setRerenderKey((prevKey) => prevKey + 1); // Step 2
     } catch (error) {
       console.error("Error deleting document or image:", error.message);
     } finally {
@@ -170,8 +172,9 @@ export const AuthorList = () => {
         console.error("Error fetching authors:", error.message);
       }
     };
+
     getAuthors();
-  }, [deleteSuccess, updateSuccess]);
+  }, [deleteSuccess, updateSuccess, rerenderKey]); // Add deleteSuccess and updateSuccess to the dependency array
 
   const handleSort = (gender) => {
     // Set the current list based on the selected gender
