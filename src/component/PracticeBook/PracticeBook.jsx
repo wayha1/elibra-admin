@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import PracticeBookList from "./PracticeBookList";
 import { BookCrud } from "./PracticeBookCrud";
+import { PracticeBookList } from "./PracticeBookList";
 
 export const PracticeBook = () => {
   const [book, setBook] = useState([

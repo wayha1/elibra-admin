@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import BaciiBookList  from "./BaciiBookList";
 import { BookCrud } from "./BookCrud";
+import { BaciiBookList } from "./BaciiBookList";
 
 export const BaciiBook = () => {
   const [book, setBook] = useState([
@@ -14,7 +14,7 @@ export const BaciiBook = () => {
   const renderContent = () => {
     switch (activeComponent) {
       case "Views-Book":
-        return <BaciiBookList />;
+        return <BaciiBookList />
       case "Add Book":
         return <BookCrud />;
       default:

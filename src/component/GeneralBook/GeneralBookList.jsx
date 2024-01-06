@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   collection,
   getDocs,
+  getDoc,
   doc,
   deleteDoc,
   updateDoc,
@@ -12,6 +13,7 @@ import { db, imgDB } from "../../firebase";
 import { v4 as uuidv4 } from "uuid";
 import { LoadingProcess } from "../LoadingProcess/LoadingProcess";
 import { FaRegFilePdf } from "react-icons/fa";
+import { deleteObject } from "firebase/storage";
 
 export const GeneralBookList = () => {
   const [bacData, setBacData] = useState([]);
@@ -61,6 +63,8 @@ export const GeneralBookList = () => {
       if (!selectBook) {
         throw new Error("Selected book is undefined");
       }
+  
+      // Construct the Firestore document reference
       const bookRef = doc(
         db,
         "Books",
@@ -68,8 +72,31 @@ export const GeneralBookList = () => {
         "GeneralBook",
         selectBook.book
       );
+  
+      // Fetch the Firestore document data before deleting
+      const bookData = (await getDoc(bookRef)).data();
+      if (!bookData) {
+        throw new Error("Document data not found");
+      }
+  
+      // Delete the Firestore document
       await deleteDoc(bookRef);
-
+  
+      // Extract the image URL and bookPdf URL from the document data
+      const { img: imageUrl, BookPdf: bookPdfUrl } = bookData;
+  
+      // Delete the storage data if an image URL is present
+      if (imageUrl) {
+        const imageRef = ref(imgDB, imageUrl);
+        await deleteObject(imageRef);
+      }
+  
+      // Delete the bookPdf from storage if it exists
+      if (bookPdfUrl) {
+        const bookPdfRef = ref(imgDB, bookPdfUrl);
+        await deleteObject(bookPdfRef);
+      }
+  
       setShowSuccessPopup(true);
       alert("Delete Successful!!");
     } catch (error) {
@@ -79,6 +106,8 @@ export const GeneralBookList = () => {
       setOpenDeleteModal(false);
     }
   };
+  
+  
 
   const handleUpdate = (book) => {
     setUpdatedBook(book);
@@ -233,7 +262,7 @@ export const GeneralBookList = () => {
               <p>Are you sure you want to delete this book?</p>
               <div className="mt-4 flex justify-end">
                 <button
-                  className="mr-2 bg-red-500 text-white p-2 rounded"
+                  className="mr-2 bg-red-500 text-white p-2 rounded active:bg-blue-200"
                   onClick={() => {
                     confirmDelete();
                   }}
