@@ -3,14 +3,13 @@ import { Navigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 
-
 const expectedEmail = "admin@gmail.com";
 
 const isAdmin = (user) => {
   return user && user.email === expectedEmail;
 };
 
-const ProtectedRoute = ({ element }) => {
+const ProtectedRoute = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -34,7 +33,7 @@ const ProtectedRoute = ({ element }) => {
   if (!isAdmin(user)) {
     return <Navigate to="/unauthorized" />;
   }
-  return element;
+  return children;
 };
 
 export default ProtectedRoute;
