@@ -11,6 +11,10 @@ export const PracticeBook = () => {
   const handleComponentChange = (component) => {
     setActiveComponent(component);
   };
+
+
+
+  
   const renderContent = () => {
     switch (activeComponent) {
       case "View Book":
