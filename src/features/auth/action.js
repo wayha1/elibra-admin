@@ -7,8 +7,6 @@ export const signIn = async (email, password) => {
       console.error("Please provide both email and password.");
       return false;
     }
-
-    // Wait for Firebase authentication to initialize
     await new Promise((resolve) => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe();
